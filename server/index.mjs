@@ -30,8 +30,10 @@ const app = async () => {
     
             let result = await handleAction(data, client);
     
-            console.log(result);
-            ws.send(JSON.stringify(result))
+
+            result.players.forEach((player) => {
+                if (player.playerId in playerToWsMap) { playerToWsMap[player.playerId].send(JSON.stringify(result))}
+            });
             
         });
     
