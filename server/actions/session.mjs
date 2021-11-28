@@ -11,7 +11,7 @@ export const createSession = async ({ playerId }, client) => {
         players: [player],
     }
 
-    const result = await client.db().collection('sessions').insertOne(session);// session._id // insertedId === ObjectId
+    const result = await client.db().collection('sessions').insertOne(session);
 
     return result.insertedId ? session : null 
 }

@@ -36,3 +36,10 @@ export const getColor = () => {
     const b = Math.floor(Math.random() * 255)
     return ["rgb(", r, ",", g, ",", b, ")"].join("");
 };
+
+export const getdbConfig = () => ({
+    username: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    hostname: process.env.DB_HOST,
+    database: process.env.DB_NAME,
+});
