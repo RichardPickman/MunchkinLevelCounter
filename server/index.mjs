@@ -1,6 +1,6 @@
 import { arrayBufferToJSON, getPlayerId } from './helpers.mjs';
 import { handleAction } from './actions/index.mjs';
-import { getdbConfig } from './config/index.mjs';
+import { getDbConfig } from './config/index.mjs';
 
 import { createConnection } from './db/index.mjs';
 import { getWebSocketServer } from './ws/index.mjs'
@@ -9,7 +9,7 @@ import * as wsCache from './ws/cache.mjs';
 
 
 const app = async () => {
-    const config = getdbConfig();
+    const config = getDbConfig();
     const wss = getWebSocketServer()
     const client = await createConnection(config);
 
@@ -31,7 +31,7 @@ const app = async () => {
             const resultString = JSON.stringify(result);
 
             result.players.forEach((player) => {                
-                const wsPlayer = wsCache.get(playerId);
+                const wsPlayer = wsCache.get(player.playerId);
 
                 if (wsPlayer) {
                     wsPlayer.send(resultString);
