@@ -2,12 +2,12 @@
   "name": "munchkinlevelcounter",
   "private": true,
   "scripts": {
-    "dev": "next dev",
-    "build": "next build",
-    "start": "next start",
-    "lint": "next lint",
-    "ws": "node server/index.mjs",
-    "nm": "nodemon server/index.mjs"
+    "ui:watch": "next dev ui/",
+    "ui:build": "next build ui/",
+    "ui:start": "next start ui/",
+    "ui:lint": "next lint ui/",
+    "server:start": "node server/index.mjs",
+    "server:watch": "nodemon server/index.mjs"
   },
   "dependencies": {
     "dotenv": "^10.0.0",
@@ -27,7 +27,7 @@
   },
   "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
   "version": "1.0.0",
-  "main": "next.config.js",
+  "main": "ui/next.config.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/RichardPickman/MunchkinLevelCounter.git"
