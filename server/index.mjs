@@ -14,8 +14,9 @@ const app = async () => {
     const client = await createConnection(config);
 
     wss.on('connection', ws => {
-        
 
+        console.log('Connected')
+        
         const playerId = getPlayerId()
         wsCache.set(playerId, ws)
 
