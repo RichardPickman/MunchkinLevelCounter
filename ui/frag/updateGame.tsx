@@ -4,7 +4,7 @@ export function updateSession(props) {
     const GAME_PAYLOAD = {
         action: "update",
         payload: { 
-            ...props.game
+            ...props
         }
     }
 

@@ -1,39 +1,69 @@
 import { useEffect, useRef, useState } from 'react'
-import PlayerDataBlock from '../../frag/player'
-import { updateSession, joinSession, createSession } from '../../frag/updateGame';
+import { OtherPlayerDataBlock } from '../../frag/player'
+import { updateSession, createSession } from '../../frag/updateGame';
+import { Fragment } from 'react'
 
-
-const Player = (props: any) => (
-    <div>
-        {props.level}
-        {props.isMe && 'it\'s me'}
-        {props}
-    </div>
-);
-
-
+import classes from '../../frag/Player.module.css'
 
 export default function createGame () {
     const ws = useRef<WebSocket|null>(null);
     const [connected, setConnected] = useState(false)
-    const [me, setMe] = useState<{ playerId: number | null }>({ playerId: null });
+    const [me, setMe] = useState<{ playerId: string | null }>({ playerId: null });
     const [players, setPlayers] = useState<{ [k: string]: any }[]>([]);
+
+    function blockHandler(data) {
+        if (data.playerId == me ) {
+            return <PlayerDataBlock props={data} />
+        } else {
+            return <OtherPlayerDataBlock props={data} />
+        }
+    }
+
+    function handleUpdate(data) {
+        const req = updateSession(data)
+    
+        ws.current.send(JSON.stringify(req))
+    }
+
+    function PlayerDataBlock(props) {
+        return (
+            <Fragment>
+                {
+                    <div className={ classes.playerBlock }>
+                        <div>
+                            <p> Your playerId is {props.playerId}</p>
+                        </div>
+                        <div>
+                        <button onClick={() => { handleUpdate({ playerId: props.playerId, sessionId: props.sessionId, level: props.level - 1 })}}> - 1</button>
+                            <p> Your level is {props.level}</p>
+                            <button onClick={() => { handleUpdate({ playerId: props.playerId, sessionId: props.sessionId, level: props.level + 1 })}}> + 1</button>
+                        </div>
+                        <div>
+                        <button onClick={() => { handleUpdate({ playerId: props.playerId, sessionId: props.sessionId, equipment: props.equipment - 1 })}}> - 1</button>
+                            <p> Your equipment is {props.equipment}</p>
+                            <button onClick={() => { handleUpdate({ playerId: props.playerId, sessionId: props.sessionId, equipment: props.equipment + 1 })}}> + 1</button>
+                        </div>
+                        <div>
+                        <button onClick={() => { handleUpdate({ playerId: props.playerId, sessionId: props.sessionId, temporaryBonus: props.temporaryBonus - 1 })}}> - 1</button>
+                            <p> Your temporary bonus is {props.temporaryBonus}</p>
+                            <button onClick={() => { handleUpdate({ playerId: props.playerId, sessionId: props.sessionId, level: props.temporaryBonus + 1 })}}> + 1</button>
+                        </div>
+                    </div>
+                }
+            </Fragment>
+        )
+    }
 
     useEffect(() => {
         ws.current = new WebSocket('ws://localhost:8080');
 
         ws.current.onmessage = (message) => {
             const mess = JSON.parse(message.data)
-
-            function handleUpdate() {
-                const req = updateSession(mess)
-
-                ws.current.send(JSON.stringify(req))
-            }
     
             if (mess.playerId) {
                 const req = createSession(mess)
-    
+                setMe(mess.playerId)
+
                 ws.current.send(JSON.stringify(req))
             } 
             else if (mess.sessionId) {
@@ -56,7 +86,11 @@ export default function createGame () {
     }
 
     return (
-        <PlayerDataBlock players={players} gamer={me} />
-    );
+        <div>
+            { players.map((data) => (
+                blockHandler(data)
+            ))}
+        </div>
+    )
 
 }
