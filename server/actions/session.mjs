@@ -42,6 +42,6 @@ export const updateSession = async (data, client) => {
             returnDocument: 'after',   
         }
     );
-
+    
     return result.value
 };

@@ -43,6 +43,8 @@ const app = async () => {
     
         ws.send(JSON.stringify({ playerId }));
     });
+    
+    console.log('started')
 }
 
 app()

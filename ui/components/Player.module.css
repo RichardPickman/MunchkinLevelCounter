@@ -2,3 +2,10 @@
     background-color: antiquewhite;
     justify-content: center;
 }
+
+.controls {
+    display: flex;
+    flex-direction: row;
+    width: 50%;
+    margin: auto;
+}
