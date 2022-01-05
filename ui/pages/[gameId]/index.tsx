@@ -1,17 +1,15 @@
 import { useEffect, useRef, useState } from 'react'
 import { Player } from '../../components/helpers'
-import { createSession } from '../../components/updateGame'; 
-import styles from './index.module.css'
+import { createSession } from '../../components/updateGame';
 
-export default function createGame () {
+export default function Game () {
     const ws = useRef<WebSocket|null>(null);
     const [connected, setConnected] = useState(false)
     const [me, setMe] = useState<{ playerId: string | null }>({ playerId: null });
     const [players, setPlayers] = useState<{ [k: string]: any }[]>([]);
-    const [sessionId, setSessionId] = useState()
 
     const handleUpdate = ({key, value}) => {
-        const payload = {playerId: me, [key]: value, sessionId};
+        const payload = {playerId: me, [key]: value, };
         const action = {
             'action': 'update',
             payload,
@@ -32,7 +30,6 @@ export default function createGame () {
 
                 ws.current.send(JSON.stringify(req))
             } else if (mess.sessionId) {
-                setSessionId(mess.sessionId)
                 setPlayers(mess.players)
                 console.log(mess.players)
             }
@@ -55,7 +52,7 @@ export default function createGame () {
     }
 
     return (
-        <div className={styles.root}> 
+        <div> 
             {
             players.map((player, index) => <Player onClick={me == player.playerId && handleUpdate} {...player} key={index} />)
             } 

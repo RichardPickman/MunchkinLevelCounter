@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import classes from './Player.module.css'
 
 const Controls = ({ name,  value, onClick }) => {
