@@ -15,8 +15,8 @@ export function joinSession(props) {
     const GAME_PAYLOAD = {
         action: "join",
         payload: { 
-            playerId: props.game.playerId,
-            sessionId: props.game.sessionId
+            playerId: props.playerId,
+            sessionId: props.sessionId
         }
     }
 

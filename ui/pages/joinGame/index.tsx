@@ -1,24 +1,33 @@
-import { useRef, useState, useEffect } from 'react'
-import Router from 'next/router';
+import { useRouter } from 'next/router';
+import { useRef, useState } from 'react'
+import styles from './index.module.css'
 
 export default function joinGame() {
-    const ws = useRef<WebSocket|null>(null);
-    const [sessionId, setSessionId] = useState<{sessionId: string | null}>({sessionId: null});
+    const router = useRouter();
+    const sessionIdRef = useRef();
 
-    const handleInput = event => {
-        setSessionId(event.target.values);
-      };
-    
+    function submitHandler(event) {
+        event.preventDefault();
 
-    function redirectToGame() {
+        const enteredSessionId = sessionIdRef.current.value;
+        
 
-    };
+        router.push({
+            pathname: '/[gameId]',
+            query : {gameId: enteredSessionId}
+            });
+    }
 
     return (
-        <form>
-          <input onChange={handleInput} placeholder='Enter id' required />
-          <button onClick={redirectToGame} >Вступить в бой</button>
-        </form>
-      )
+          <form onSubmit={submitHandler}>
+            <div>
+              <label htmlFor='sessionId'>Address</label>
+              <input type='text' required id='sessionId' ref={sessionIdRef} />
+            </div>
+            <div>
+              <button>Add Meetup</button>
+            </div>
+          </form>
+      );
 };
 
