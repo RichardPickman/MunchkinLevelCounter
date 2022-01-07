@@ -23,7 +23,7 @@ export const Player = ({onClick, playerId, isOwner, color,  ...props}:{[k:string
                     <p>{key}: {value}</p>
                     {onClick && <Controls name={key} value={value} onClick={onClick} />}
                 </div>
-            ))};
+            ))}
         </div>
     </div>
     );
