@@ -4,37 +4,41 @@ import { useRouter } from 'next/router';
 import { joinSession } from '../components/updateGame';
 import { useEffect, useRef } from 'react';
 
-export default function Home({me, ws, sessionId, players}) {
+export default function Home({ playerId, ws, sessionId, players }) {
     const inputRef = useRef<HTMLInputElement>()
     const router = useRouter()
 
     const create = () => {
-        const payload = {playerId: me};
-        const action = {
+        const payload = { playerId };
+        const action = JSON.stringify({
             'action': 'create',
             payload,
-        };
+        });
 
-        ws.current.send(JSON.stringify(action));
+        ws.current.send(action);
     }
 
     const join = () => {
-        const payload = {playerId: me, sessionId: inputRef.current.value}
-        const req = joinSession(payload)
+        const payload = {playerId, sessionId: inputRef.current.value}
+        const req = JSON.stringify(joinSession(payload))
         
 
-        ws.current.send(JSON.stringify(req));
+        ws.current.send(req);
     }
 
     const handleUpdate = ({key, value}) => {
-        const payload = {playerId: me, [key]: value, sessionId};
-        const action = {
+        const payload = {playerId, [key]: value, sessionId};
+        const action = JSON.stringify({
             'action': 'update',
             payload,
-        };
-        console.log(action)
-        ws.current.send(JSON.stringify(action));
+        });
+        
+        ws.current.send(action);
     };
+
+    const gameResult = () => {
+
+    }
 
     useEffect(() => {
         if (sessionId) { 
@@ -42,26 +46,29 @@ export default function Home({me, ws, sessionId, players}) {
         }
     }, [sessionId])
 
+
+
     if (sessionId) {
         return (
             <div>
                 {sessionId} 
             {
-            players && players.map((player, index) => <Player onClick={me == player.playerId && handleUpdate} {...player} key={index} />)
+            players && players.map(( player, index ) => <Player onClick={ playerId == player.playerId && handleUpdate } {...player} key={index} />)
             } 
         </div> 
         )
     }
 
-    
     return (
-        <main>
+        <div className={styles.homePage}>
             <div className={styles.btngroup}>
                 <button onClick={create}>Create game</button> 
-                <button onClick={join}>Join game</button> 
-                <input ref={inputRef}></input>
+                <div className={styles.joining}>
+                    <input ref={inputRef} placeholder='Enter id'></input>
+                    <button onClick={join}>Join game</button> 
+                </div>
             </div>
 
-        </main>
+        </div>
     )
 }

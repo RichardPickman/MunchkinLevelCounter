@@ -2,10 +2,17 @@ import { useState } from 'react'
 import classes from './Player.module.css'
 
 const Controls = ({ name,  value, onClick }) => {
+    if (value < 0) {
+        value = 0
+    }
+    const buttonDown = <button onClick={()=> onClick({ key: name, value: value - 1})}>-</button>
+
     return (
     <div className={classes.controls}>
         <button onClick={()=> onClick({ key: name, value: value + 1})}>+</button>
-        <button onClick={()=> onClick({ key: name, value: value - 1})}>-</button>
+        {(name == 'level' && value == 1 ) ? null
+        :(value == 0 && name != 'level' ) ? null
+        : buttonDown }
    </div>
     )
 };

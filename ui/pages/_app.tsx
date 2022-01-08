@@ -5,7 +5,7 @@ import { useEffect, useRef, useState } from 'react';
 function MyApp({ Component, pageProps }: AppProps) {
     const ws = useRef<WebSocket|null>(null);
     const [connected, setConnected] = useState(false)
-    const [me, setMe] = useState<{ playerId: string | null }>(null);
+    const [playerId, setMe] = useState<{ playerId: string | null }>(null);
     const [players, setPlayers] = useState<{ [k: string]: any }[]>([]);
     const [sessionId, setSessionId] = useState()
 
@@ -18,7 +18,6 @@ function MyApp({ Component, pageProps }: AppProps) {
     
             if (mess.playerId) {
                 setMe(mess.playerId)
-
             } else if (mess.sessionId) {
                 setSessionId(mess.sessionId)
                 setPlayers(mess.players)
@@ -41,7 +40,7 @@ function MyApp({ Component, pageProps }: AppProps) {
         )
     }
 
-    return <Component {...{connected, me, players, sessionId, ws, ...pageProps}} />
+    return <Component {...{connected, playerId, players, sessionId, ws, ...pageProps}} />
 }
 
 export default MyApp
