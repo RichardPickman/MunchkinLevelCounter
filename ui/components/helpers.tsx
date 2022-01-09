@@ -1,18 +1,16 @@
-import { useState } from 'react'
-import classes from './Player.module.css'
+import classes from './styles/Player.module.css'
 
 const Controls = ({ name,  value, onClick }) => {
-    if (value < 0) {
-        value = 0
-    }
-    const buttonDown = <button onClick={()=> onClick({ key: name, value: value - 1})}>-</button>
+    const isLevelDown = !(name === 'level' && value === 1)
+    const isLevelUp = !(name === 'level' && value === 10)
+
+    const onUp = () => onClick({ key: name, value: value + 1}) 
+    const onDown = () => onClick({ key: name, value: value -1})
 
     return (
     <div className={classes.controls}>
-        <button onClick={()=> onClick({ key: name, value: value + 1})}>+</button>
-        {(name == 'level' && value == 1 ) ? null
-        :(value == 0 && name != 'level' ) ? null
-        : buttonDown }
+        {isLevelUp && <button onClick={onUp}>+</button>}
+        {isLevelDown && <button onClick={onDown}>-</button>}
    </div>
     )
 };
