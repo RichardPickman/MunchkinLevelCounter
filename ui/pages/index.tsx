@@ -36,10 +36,6 @@ export default function Home({ playerId, ws, sessionId, players }) {
         ws.current.send(action);
     };
 
-    const gameResult = () => {
-
-    }
-
     useEffect(() => {
         if (sessionId) { 
             router.push(`/${sessionId}`, undefined, { shallow: true })
