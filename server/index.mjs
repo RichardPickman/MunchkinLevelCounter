@@ -1,60 +1,64 @@
-import { arrayBufferToJSON, getPlayerId } from './helpers.mjs';
+import { arrayBufferToJSON } from './helpers.mjs';
 import { handleAction } from './actions/index.mjs';
 import { getDbConfig } from './config/index.mjs';
-
 import { createConnection } from './db/index.mjs';
 import { getWebSocketServer } from './ws/index.mjs'
 import * as wsCache from './ws/cache.mjs';
 
 
+const broadcast = (data) => {
+    let resultString = JSON.stringify(data);
+    data.payload.players.forEach((player) => {                
+        const wsPlayer = wsCache.get(player.playerId);
+
+        if (wsPlayer) {
+            wsPlayer.send(resultString);
+        }
+    });
+}
+
 const app = async () => {
     const config = getDbConfig();
     const wss = getWebSocketServer()
     const client = await createConnection(config);
+    const db = client.db()
 
     wss.on('connection', ws => {
-        
-        const playerId = getPlayerId()
-        wsCache.set(playerId, ws)
         ws.on('message', async arrayBuffer => {
             console.log('LOG: Connection established')
             const data = arrayBufferToJSON(arrayBuffer);
             console.log(data);
+            if (data && data.playerId && !wsCache.has(playerId)) {
+                wsCache.set(playerId, ws)
+            }
+        })
+
+        ws.on('message', async arrayBuffer => {
+            const data = arrayBufferToJSON(arrayBuffer);
     
             if (!data) {
                 return console.log("Wrong data: ", arrayBuffer.toString());
             };
 
-            // HANDLE NEW PLAYER AND JSON RESPONSE 
-            if (data.storageId){
-                const playerId = getPlayerId()
+            switch (data.action) {
+                case 'player/getId': {
+                    const payload = await handleAction(data, db, ws);
 
-                wsCache.set(playerId, ws)
+                    wsCache.set(payload.playerId, ws)
+                    ws.send(JSON.stringify({action: data.action, payload}))
 
-                let wsPlayer = wsCache.get(playerId)
-                let resultString = JSON.stringify({ playerId })
-
-                console.log(resultString)
-                
-                if (wsPlayer) {
-                    wsPlayer.send(resultString);
+                    break
                 }
-            } else {
-                let result = await handleAction(data, client);
-                let resultString = JSON.stringify(result);
+                case 'session/update':
+                case 'session/join':
+                case 'session/create': {
+                    const payload = await handleAction(data, db, ws);
 
-                result.players.forEach((player) => {                
-                    const wsPlayer = wsCache.get(player.playerId);
-
-                    if (wsPlayer) {
-                        wsPlayer.send(resultString);
-                    }
-                });
+                    broadcast({action: data.action, payload})
+                    break
+                }
             }
-            
         });
-    
-        // ws.send(JSON.stringify({ playerId }));
     });
     
     console.log('LOG: Server has been started')

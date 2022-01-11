@@ -1,9 +1,10 @@
 import { createPlayer } from "./helpers.mjs";
-import { getSessionId, getUpdateFields} from "../helpers.mjs"
+import { getSessionId, getUpdateFields, getPlayerId} from "../helpers.mjs"
+import * as wsCache from '../ws/cache.mjs';
 
 
-export const createSession = async ({ playerId }, client) => {
-    const player = createPlayer(playerId, true);
+export const createSession = async (data, db) => {
+    const player = createPlayer(data.playerId, true);
     let sessionId = getSessionId()
     const session = {
         sessionId,
@@ -11,15 +12,15 @@ export const createSession = async ({ playerId }, client) => {
         players: [player],
     }
 
-    const result = await client.db().collection('sessions').insertOne(session);
+    const result = await db.collection('sessions').insertOne(session);
 
     return result.insertedId ? session : null 
 }
 
-export const joinSession = async ({ sessionId, playerId }, client) => {
+export const joinSession = async ({ sessionId, playerId}, db) => {
     const player = createPlayer(playerId)
 
-    const { value: session } = await client.db().collection('sessions').findOneAndUpdate(
+    const { value: session } = await db.collection('sessions').findOneAndUpdate(
         { sessionId }, 
         {
             $push: {
@@ -32,9 +33,8 @@ export const joinSession = async ({ sessionId, playerId }, client) => {
     return session
 }
 
-export const updateSession = async (data, client) => {
-    let { sessionId, playerId, ...changes } = data
-    const result = await client.db().collection('sessions').findOneAndUpdate(
+export const updateSession = async ({ sessionId, playerId, ...changes }, db) => {
+    const result = await db.collection('sessions').findOneAndUpdate(
         { sessionId },
         { $set: getUpdateFields(changes) },
         { 
@@ -44,4 +44,11 @@ export const updateSession = async (data, client) => {
     );
     
     return result.value
+};
+ 
+export const getIdentifier = async () => {
+    const player = getPlayerId()
+    const result = { playerId: player }
+
+    return result
 };
