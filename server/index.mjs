@@ -41,7 +41,7 @@ const app = async () => {
         ws.on('close', () => {
             const cacheItems = Array.from(wsCache.entries());
             const cachedSocket = cacheItems.find(([key, value]) => value === ws);
-            const [playerId] = cachedSocket || {};
+            const [playerId] = cachedSocket || [];
 
             if (!playerId) {
                 console.log('socket was not cached');
