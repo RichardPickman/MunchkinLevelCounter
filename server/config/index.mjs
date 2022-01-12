@@ -1,6 +1,5 @@
 import { config } from 'dotenv';
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+
 
 config();
 
