@@ -1,7 +1,7 @@
 import styles from './Home.module.css'
 
 
-export const MainPage = ({create, join, playerId, inputRef}: {[k:string]: any}) => {
+export const MainPage = ({ create, join, playerId, inputRef }: {[k:string]: any}) => {
     return (
         <div className={styles.homePage}>
             <div className={styles.btngroup}>

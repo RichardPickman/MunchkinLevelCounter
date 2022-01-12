@@ -1,7 +1,7 @@
 import { Controls } from '../controls/index'
 import styles from './Player.module.css'
  
-export const Player = ({onClick, playerId, isOwner, color,  ...props}:{[k:string]: any}) => {
+export const Player = ({ onClick, playerId, isOwner, color,  ...props }:{[k:string]: any}) => {
     let totalPower = 0
     const hasControls = !!onClick
     const owner = (isOwner == true) ? <strong> Власть имущий </strong> : <strong> Холоп </strong>

@@ -26,8 +26,8 @@ const app = async () => {
     wss.on('connection', ws => {
         const cacheIt = async arrayBuffer => {
             const data = arrayBufferToJSON(arrayBuffer);
-            const {payload} = data || {};
-            const {playerId} = payload;
+            const payload = data.payload || {};
+            const { playerId } = payload;
 
             console.log('LOG: Connection established')
 
