@@ -23,7 +23,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "pages/[gameId]"  ],
+, "pages/[gameId]", "hooks/index.mjs", "components/player/index.mjs", "components/controls/index.mjs", "components/session/index.mjs"  ],
   "exclude": [
     "node_modules"
   ]

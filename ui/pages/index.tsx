@@ -1,17 +1,10 @@
-import  styles  from '../styles/Home.module.css'
-import { Player } from '../components/helpers/helpers'
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
-// move it to hooks/useLocalStorage/index.tsx
-const useLocalStorage = (key) => {
-    const [value] = useState(() => {
-        // почитай про globalThis, это новая фича языка
-        return globalThis.localStorage && globalThis.localStorage.getItem(key)
-    });
-
-    return value;
-}
+import { useLocalStorage } from '../hooks/useLocalStorage/index';
+import { MainPage } from '../components/mainpage/index';
+import { Error } from '../components/error/index';
+import { Session } from '../components/session/index';
 
 
 export default function Home() {
@@ -26,17 +19,17 @@ export default function Home() {
         }
     };
 
-    const [connected, setConnected] = useState(false);
     const inputRef = useRef<HTMLInputElement>();
     const router = useRouter();
-
+    
     const savedPlayerId = useLocalStorage("playerId");
+    const [connected, setConnected] = useState(false);
     const [playerId, setPlayerId] = useState(savedPlayerId);
     const [players, setPlayers] = useState<{ [k: string]: any }[]>([]);
     const [sessionId, setSessionId] = useState();
 
-    console.log('saved id =', savedPlayerId);
-    console.log('active id =', playerId);
+    console.log('saved id = ', savedPlayerId);
+    console.log('active id = ', playerId);
     
     useEffect(() => {
         if (ws.current) {
@@ -73,7 +66,7 @@ export default function Home() {
         return () => ws?.current.close();
     }, []);
 
-    useEffect(() => !playerId && send({ action: 'player/getId' }), []);
+    useEffect(() =>  connected && !playerId && send({ action: 'player/getId' }), [connected]);
 
     const create = () => send({ 
         action: 'session/create',
@@ -94,38 +87,21 @@ export default function Home() {
         },
     });
 
-    useEffect(() => sessionId && router.push(`/${sessionId}`, undefined, { shallow: true }), [sessionId]);
+    useEffect(() => sessionId && router.push(`/#${sessionId}`, undefined, { shallow: true }), [sessionId]);
 
     if (!connected) {
-        // <Error message="You are disconnected" />
         return (
-            <div>
-                <div>YOU ARE DISCONNECTED</div> 
-            </div>
+            <Error />
         )
     }
 
     if (sessionId) {
-        // <Session players={players} />
         return (
-            <div>
-                {sessionId} 
-                {players && players.map(( player, index ) => <Player onClick={ playerId === player.playerId && update } {...player} key={index} />)} 
-            </div>
+            <Session playerId={playerId} sessionId={sessionId} players={players} update={update} />
         )
     }
 
     return (
-        // <HomePage onCreate={create} onJoin={join} />
-        <div className={styles.homePage}>
-            <div className={styles.btngroup}>
-                <button onClick={create} disabled={!playerId}>Create game</button> 
-                <div className={styles.joining}>
-                    <input ref={inputRef} placeholder='Enter id'></input>
-                    <button onClick={join} disabled={!playerId}>Join game</button> 
-                </div>
-            </div>
-
-        </div>
+            <MainPage create={create} join={join} playerId={playerId} inputRef={inputRef}/> 
     )
 }
