@@ -3,8 +3,8 @@ import { handleAction } from './actions/index.mjs';
 import { getDbConfig } from './config/index.mjs';
 import { createConnection } from './db/index.mjs';
 import { getWebSocketServer } from './ws/index.mjs'
-import * as wsCache from './ws/cache.mjs';
 
+const wsCache = new Map();
 
 const broadcast = (data) => {
     let resultString = JSON.stringify(data);
@@ -24,14 +24,36 @@ const app = async () => {
     const db = client.db()
 
     wss.on('connection', ws => {
-        ws.on('message', async arrayBuffer => {
-            console.log('LOG: Connection established')
+        const cacheIt = async arrayBuffer => {
             const data = arrayBufferToJSON(arrayBuffer);
-            console.log(data);
-            if (data && data.playerId && !wsCache.has(playerId)) {
-                wsCache.set(playerId, ws)
+            const {payload} = data || {};
+            const {playerId} = payload;
+
+            console.log('LOG: Connection established')
+
+            if (!wsCache.has(playerId)) {
+                console.log('cached as', playerId);
+                wsCache.set(playerId, ws);
+                ws.off('message', cacheIt);
             }
-        })
+        }
+
+        ws.on('close', () => {
+            const cacheItems = Array.from(wsCache.entries());
+            const cachedSocket = cacheItems.find(([key, value]) => value === ws);
+            const [playerId] = cachedSocket || {};
+
+            if (!playerId) {
+                console.log('socket was not cached');
+                return;
+            }
+
+            wsCache.delete(playerId);
+            
+            console.log(playerId, 'removed from cache due to closed connection');
+        });
+
+        ws.on('message', cacheIt);
 
         ws.on('message', async arrayBuffer => {
             const data = arrayBufferToJSON(arrayBuffer);

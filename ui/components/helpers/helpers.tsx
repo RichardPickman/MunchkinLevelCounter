@@ -1,17 +1,5 @@
 import classes from './styles/Player.module.css'
 
-const NextTurn = ({name, onClick}) => {
-    const isBonus = (name === 'temporaryBonus')
-
-    const nullifyBonus = () => onClick({ key: name, value: 0})
-
-    return (
-        <div className={classes.controls}>
-            {isBonus && <button onClick={nullifyBonus}>Next turn</button>}
-        </div>
-    )
-};
-
 const Controls = ({ name,  value, onClick }) => {
     const isLevelDown = !(name === 'level' && value === 1)
     const isLevelUp = !(name === 'level' && value === 10)
@@ -46,10 +34,7 @@ export const Player = ({onClick, playerId, isOwner, color,  ...props}:{[k:string
                     {onClick && <Controls name={key} value={value} onClick={onClick} />}
                 </div>))}
             </div>
-            {Object.entries(props).map(([key]) => (
-            <div>
-                {onClick && <NextTurn name={key} onClick={onClick} />}
-            </div>))}
+            <button onClick={() => onClick({ key: 'temporaryBonus', value: 0})}>Next turn</button>
         </div>
     );
 };
