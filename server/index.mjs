@@ -66,7 +66,6 @@ const app = async () => {
                 case 'player/getId': {
                     const payload = await handleAction(data, db, ws);
 
-                    wsCache.set(payload.playerId, ws)
                     ws.send(JSON.stringify({action: data.action, payload}))
 
                     break

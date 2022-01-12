@@ -19,7 +19,6 @@ export default function Home() {
         }
     };
 
-    const inputRef = useRef<HTMLInputElement>();
     const router = useRouter();
     
     const savedPlayerId = useLocalStorage("playerId");
@@ -73,9 +72,9 @@ export default function Home() {
         payload: { playerId },
     });
 
-    const join = () => send({ 
+    const join = (sessionId) => send({ 
         action: 'session/join', 
-        payload: { playerId, sessionId: inputRef.current.value },
+        payload: { playerId, sessionId },
     });
 
     const update = ({key, value}) => send({
@@ -102,6 +101,6 @@ export default function Home() {
     }
 
     return (
-            <MainPage create={create} join={join} playerId={playerId} inputRef={inputRef}/> 
+            <MainPage create={create} join={join} playerId={playerId} /> 
     )
 }
