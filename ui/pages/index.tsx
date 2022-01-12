@@ -1,19 +1,11 @@
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
-// import { useLocalStorage } from '../hooks/useLocalStorage/index.mjs';
-import { MainPage } from '../components/mainpage/index.mjs';
-import { Error } from '../components/error/index.mjs';
-import { Session } from '../components/session/index.mjs';
+import { useLocalStorage } from '../hooks/useLocalStorage/index';
+import { MainPage } from '../components/mainpage/index';
+import { Error } from '../components/error/index';
+import { Session } from '../components/session/index';
 
-const useLocalStorage = (key) => {
-    const [value] = useState(() => {
-        // почитай про globalThis, это новая фича языка
-        return globalThis.localStorage && globalThis.localStorage.getItem(key)
-    });
-
-    return value;
-}
 
 export default function Home() {
     const ws = useRef<WebSocket|null>(null);
@@ -105,7 +97,7 @@ export default function Home() {
 
     if (sessionId) {
         return (
-            <Session sessionId={sessionId} players={players} update={update} />
+            <Session playerId={playerId} sessionId={sessionId} players={players} update={update} />
         )
     }
 

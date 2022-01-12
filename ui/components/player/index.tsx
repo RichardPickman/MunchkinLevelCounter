@@ -1,4 +1,4 @@
-import { Controls } from '../controls/index.mjs'
+import { Controls } from '../controls/index'
 import styles from './Player.module.css'
  
 export const Player = ({onClick, playerId, isOwner, color,  ...props}:{[k:string]: any}) => {

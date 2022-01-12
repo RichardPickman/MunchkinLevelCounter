@@ -1,6 +1,6 @@
 import { Player } from '../player/index'
 
-export const Session = ({sessionId, players, update}) => {
+export const Session = ({playerId, sessionId, players, update}: {[k:string]: any}) => {
     return (
         <div>
             {sessionId}

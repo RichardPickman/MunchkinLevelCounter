@@ -1,7 +1,7 @@
 import styles from './Home.module.css'
 
 
-export const MainPage = (create, join, playerId, inputRef) => {
+export const MainPage = ({create, join, playerId, inputRef}: {[k:string]: any}) => {
     return (
         <div className={styles.homePage}>
             <div className={styles.btngroup}>
@@ -12,5 +12,5 @@ export const MainPage = (create, join, playerId, inputRef) => {
                 </div>
             </div>
         </div>
-    )
-}
+    );
+};
