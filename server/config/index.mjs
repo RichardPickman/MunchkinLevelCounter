@@ -1,7 +1,7 @@
 import { config } from 'dotenv';
 
-config();
 
+config();
 
 export const getDbConfig = () => ({
     username: process.env.DB_USER,
