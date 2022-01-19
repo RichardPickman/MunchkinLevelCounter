@@ -1,8 +1,8 @@
 import { arrayBufferToJSON } from './helpers.mjs';
 import { handleAction } from './actions/index.mjs';
-import { getDbConfig } from './config/index.mjs';
+import { getConfig } from './config/index.mjs';
 import { createConnection } from './db/index.mjs';
-import { getWebSocketServer } from './ws/index.mjs'
+import { WebSocketServer } from 'ws';
 
 const wsCache = new Map();
 
@@ -18,10 +18,10 @@ const broadcast = (data) => {
 }
 
 const app = async () => {
-    const config = getDbConfig();
-    const wss = getWebSocketServer()
-    const client = await createConnection(config);
-    const db = client.db()
+    const config = getConfig();
+    const wss = new WebSocketServer(config.ws);
+    const client = await createConnection(config.db);
+    const db = client.db();
 
     wss.on('connection', ws => {
         const cacheIt = async arrayBuffer => {
