@@ -96,7 +96,10 @@ export default function Home() {
 
     if (sessionId) {
         return (
-            <Session playerId={playerId} sessionId={sessionId} players={players} update={update} />
+            <div>
+                <Session playerId={playerId} sessionId={sessionId} players={players} update={update} />
+            </div>
+            
         )
     }
 

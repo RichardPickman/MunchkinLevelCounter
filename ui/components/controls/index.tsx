@@ -16,3 +16,4 @@ export const Controls = ({ name,  value, onClick }) => {
         </div>
     )
 };
+
