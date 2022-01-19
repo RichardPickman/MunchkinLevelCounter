@@ -31,7 +31,8 @@ const app = async () => {
 
             console.log('LOG: Connection established')
 
-            if (!wsCache.has(playerId)) {
+            // this one fixes the problem with cached as undefined and empty join screen
+            if (playerId && !wsCache.has(playerId)) {
                 console.log('cached as', playerId);
                 wsCache.set(playerId, ws);
                 ws.off('message', cacheIt);

@@ -42,6 +42,13 @@ export const updateSession = async ({ sessionId, playerId, ...changes }, db) => 
             returnDocument: 'after',   
         }
     );
+
+    // find one example
+    const _session = await db.collection('sessions').findOne(
+        { sessionId, players: { $elemMatch: { playerId } } }
+    );
+
+    console.log('findOne result = ', _session);
     
     return result.value
 };
@@ -52,3 +59,5 @@ export const getIdentifier = async () => {
 
     return result
 };
+
+// turn on new lines at the end of the file on save

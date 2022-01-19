@@ -1,9 +1,6 @@
 
-export const Power = (props) => {
-    let totalPower = 0
-    Object.values(props).map( value =>  totalPower += value )
-
-    return totalPower
-}
-
-export const Owner = (isOwner) => (isOwner == true) ? <strong> Власть имущий </strong> : <strong> Холоп </strong>
+// general reusable helper to calc the sum
+export const sum = props => Object
+    .values(props)
+    .map(value => Number(value))
+    .reduce((total, value) => total + value, 0);
