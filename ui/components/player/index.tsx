@@ -26,7 +26,8 @@ export const Player = ({ onClick, playerId, isOwner, color, isInside, ...props }
     
     return (
         <div style={{background: color}}>
-            <Role isOwner={isOwner} />
+            <Role isOwner={isOwner} />  
+            
             <p> playerId: {playerId}</p>
             <p> Total power: <strong>{sum(props)}</strong></p>
             <div>
