@@ -52,6 +52,7 @@ const app = async () => {
             wsCache.delete(playerId);
             
             console.log(playerId, 'removed from cache due to closed connection');
+
         });
 
         ws.on('message', cacheIt);

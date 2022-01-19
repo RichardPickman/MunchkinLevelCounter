@@ -1,4 +1,5 @@
-import { createSession, updateSession, getIdentifier, isAlreadyInGame } from './session.mjs'
+import { createSession, updateSession, joinSession } from './session.mjs'
+import { getIdentifier } from './player.mjs';
 
 
 export const handleAction = async (data, db) => {
@@ -8,7 +9,7 @@ export const handleAction = async (data, db) => {
         case 'session/update':
             return updateSession(data.payload, db);
         case 'session/join':
-            return isAlreadyInGame(data.payload, db);
+            return joinSession(data.payload, db);
         case 'player/getId':
             return getIdentifier()
         }
