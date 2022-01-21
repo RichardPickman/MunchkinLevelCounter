@@ -1,10 +1,10 @@
 import { Player } from '../player/index'
 
-export const Session = ({ playerId, sessionId, players, update, router }: {[k:string]: any}) => {
+export const Session = ({ playerId, sessionId, players, update, exit }: {[k:string]: any}) => {
     return (
         <div>
             {sessionId}
-            {players.map(( player, index ) => player.isInside == true && <Player onClick={ playerId === player.playerId && update } {...player} key={index} />)}
+            {players.map(( player, index ) => player.isActive == 'Online' && <Player onEnter={ playerId === player.playerId && update } onExit={exit} {...player} key={index} />)}
         </div>
     )
 }

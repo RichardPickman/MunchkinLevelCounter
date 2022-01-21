@@ -1,9 +1,16 @@
+import styles from './Index.module.css'
 
-
-export const Error = () => {
-    return (
-        <div>
-            <div> Not connected to WebSocket. Try again! </div> 
-        </div>
-    )
+const ERRORS = {
+    WS: 'Not connected to WebSocket. Try Again!',
 }
+
+export const Error = ({ cause }) => {
+    switch (cause) {
+        case 'ws':
+            return (
+                <div className={styles.error}>
+                    <p className={styles.message}>{ ERRORS.WS }</p>
+                </div>
+            )
+    }
+};

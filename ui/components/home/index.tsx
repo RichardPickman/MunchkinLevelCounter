@@ -1,11 +1,11 @@
 import { useRouter } from "next/router"
 
 
-export const Home = ({ onClick }) => {
+export const Home = ({ onExit }) => {
     const router = useRouter()
     const returnHome = () => {
-        onClick({key: 'isInside', value: 0})
-        router.push('/', undefined, { shallow: true})
+        onExit({key: 'isActive', value: 'Offline'})
+        router.push('/', undefined, { shallow: true })
     }
 
     return (

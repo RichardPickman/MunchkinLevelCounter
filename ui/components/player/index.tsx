@@ -5,11 +5,12 @@ import styles from './Player.module.css';
 
 // Props is local type for your component props 
 type Props = {
-    onClick: ({ key: string, value: unknown }) => void,
+    onEnter: ({ key: string, value: unknown }) => void,
+    onExit: ({ key: string, value: unknown }) => void,
     playerId: string, 
     isOwner: boolean,
     color: string, 
-    isInside: boolean, // @todo: find a better name
+    isActive: string,
     level: number,
     equipment: number,
     temporaryBonus: number,
@@ -21,8 +22,8 @@ const Role = ({ isOwner }) => (
     </strong>
 );
  
-export const Player = ({ onClick, playerId, isOwner, color, isInside, ...props }: Props) => {
-    const hasControls = !!onClick
+export const Player = ({ onEnter, onExit, playerId, isOwner, color, isActive, ...props }: Props) => {
+    const hasControls = !!onEnter
     
     return (
         <div style={{background: color}}>
@@ -34,12 +35,12 @@ export const Player = ({ onClick, playerId, isOwner, color, isInside, ...props }
                 {Object.entries(props).map(([key, value]) => (
                     <div key={key} className={ styles.playerBlock }>
                         <p>{key}: {value}</p>
-                        { hasControls && <Controls name={key} value={value} onClick={onClick} />}
-                    </div>)
-                )}
+                        { hasControls && <Controls name={key} value={value} onClick={onEnter} />}
+                    </div>
+                ))}
             </div>
-            { hasControls && <button onClick={() => onClick({ key: 'temporaryBonus', value: 0})}>Next turn</button>}
-            { hasControls && <Home onClick={onClick} />}
+            { hasControls && <button onClick={() => onEnter({ key: 'temporaryBonus', value: 0})}>Next turn</button>}
+            { hasControls && <Home onExit={onExit} />}
         </div>
     );
 };

@@ -54,6 +54,10 @@ export default function Home() {
                     setPlayers(data.payload.players)
                     setSessionId(data.payload.sessionId)
                     break }
+                case 'session/exit': {
+                    setPlayers([])
+                    setSessionId(null)
+                }
                 default: 
                     console.log('Action not supported')
                     break
@@ -86,18 +90,26 @@ export default function Home() {
         },
     });
 
+    const exit = ({key, value}) => send({
+        action: 'session/exit',
+        payload: {
+            playerId, 
+            sessionId,
+            [key]: value, 
+        },
+    })
+
     useEffect(() => sessionId && router.push(`/#${sessionId}`, undefined, { shallow: true }), [sessionId]);
 
     if (!connected) {
-        return (
-            <Error />
-        )
+        const output = 'ws/connection'
+        return <Error cause="ws" />
     }
 
     if (sessionId) {
         return (
             <div>
-                <Session playerId={playerId} sessionId={sessionId} players={players} update={update} />
+                <Session playerId={playerId} sessionId={sessionId} players={players} update={update} exit={exit}/>
             </div>
             
         )
