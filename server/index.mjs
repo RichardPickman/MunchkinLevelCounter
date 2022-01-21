@@ -74,7 +74,8 @@ const app = async () => {
                 }
                 case 'session/update':
                 case 'session/join':
-                case 'session/create': {
+                case 'session/create':
+                case 'session/exit': {
                     const payload = await handleAction(data, db, ws);
 
                     broadcast({action: data.action, payload})

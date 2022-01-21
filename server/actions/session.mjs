@@ -1,5 +1,5 @@
 import { createPlayer } from "./helpers.mjs";
-import { getSessionId, getUpdateFields, getPlayerId} from "../helpers.mjs";
+import { getSessionId, getUpdateFields } from "../helpers.mjs";
 
 
 const getSession = async ({ sessionId, playerId }, db) => {
@@ -32,7 +32,7 @@ export const joinSession = async ({ sessionId, playerId }, db) => {
         return updateSession({ 
             sessionId,
             playerId,
-            isInside: true,
+            isActive: 'Online',
         }, db) 
     }
 
@@ -58,3 +58,8 @@ export const updateSession = async ({ sessionId, playerId, ...changes }, db) => 
     return result.value
 };
 
+export const exitSession = async ({ sessionId, playerId }, db) => {
+    const result = updateSession({ sessionId, playerId, isActive: 'Offline'}, db)
+
+    return result
+};
