@@ -32,7 +32,7 @@ export const joinSession = async ({ sessionId, playerId }, db) => {
         return updateSession({ 
             sessionId,
             playerId,
-            isActive: 'Online',
+            isActive: true,
         }, db) 
     }
 
@@ -59,7 +59,7 @@ export const updateSession = async ({ sessionId, playerId, ...changes }, db) => 
 };
 
 export const exitSession = async ({ sessionId, playerId }, db) => {
-    const result = updateSession({ sessionId, playerId, isActive: 'Offline'}, db)
+    const result = updateSession({ sessionId, playerId, isActive: false}, db)
 
     return result
 };

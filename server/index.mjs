@@ -8,11 +8,16 @@ const wsCache = new Map();
 
 const broadcast = (data) => {
     let resultString = JSON.stringify(data);
+    const payload = data.payload
     data.payload.players.forEach((player) => {                
         const wsPlayer = wsCache.get(player.playerId);
 
-        if (wsPlayer) {
-            wsPlayer.send(resultString);
+        if (data.action == 'session/exit' && wsPlayer && player.isActive === false) {
+            wsPlayer.send(resultString)
+        } else {
+            const result = {action: 'session/update' , payload}
+
+            wsPlayer.send(JSON.stringify(result))
         }
     });
 }
@@ -31,7 +36,6 @@ const app = async () => {
 
             console.log('LOG: Connection established')
 
-            // this one fixes the problem with cached as undefined and empty join screen
             if (playerId && !wsCache.has(playerId)) {
                 console.log('cached as', playerId);
                 wsCache.set(playerId, ws);

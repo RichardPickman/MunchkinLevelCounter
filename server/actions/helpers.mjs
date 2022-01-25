@@ -8,5 +8,5 @@ export const createPlayer = (playerId, isOwner = false) => ({
         level: 1,
         equipment: 0,
         temporaryBonus: 0,
-        isActive: 'Online'
+        isActive: true
 });
