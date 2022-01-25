@@ -10,7 +10,7 @@ type Props = {
     playerId: string, 
     isOwner: boolean,
     color: string, 
-    isActive: string,
+    isActive: boolean,
     level: number,
     equipment: number,
     temporaryBonus: number,

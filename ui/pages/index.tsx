@@ -53,10 +53,19 @@ export default function Home() {
                 case 'session/create': {
                     setPlayers(data.payload.players)
                     setSessionId(data.payload.sessionId)
-                    break }
+                    break
+                }
                 case 'session/exit': {
-                    setPlayers([])
-                    setSessionId(null)
+                    const { players } = data.payload;
+                    const player = players.find(player => player.playerId === playerId);
+                    const { isActive } = player;
+                
+                    if (!isActive) {
+                        setPlayers([]);
+                        setSessionId(null);
+                    }
+                    
+                    break;
                 }
                 default: 
                     console.log('Action not supported')
@@ -102,7 +111,6 @@ export default function Home() {
     useEffect(() => sessionId && router.push(`/#${sessionId}`, undefined, { shallow: true }), [sessionId]);
 
     if (!connected) {
-        const output = 'ws/connection'
         return <Error cause="ws" />
     }
 
@@ -116,6 +124,6 @@ export default function Home() {
     }
 
     return (
-            <MainPage create={create} join={join} playerId={playerId} /> 
+        <MainPage create={create} join={join} playerId={playerId} /> 
     )
 }
