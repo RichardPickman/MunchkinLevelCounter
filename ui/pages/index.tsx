@@ -8,17 +8,42 @@ import { Session } from '../components/session/index';
 
 
 export default function Home() {
-    const ws = useRef<WebSocket|null>(null);
-
+    
     const send = data => {
         const message = JSON.stringify(data);
-
-        if (ws.current) {
-            console.log('sending message:', message);
-            ws.current.send(message);
-        }
+        
+        if (ws.current) ws.current.send(message);
     };
-
+    
+    const create = () => send({ 
+        action: 'session/create', 
+        payload: { playerId }, 
+    });
+    
+    const join = (sessionId) => send({ 
+        action: 'session/join', 
+        payload: { playerId, sessionId },
+    });
+    
+    const update = ({key, value}) => send({
+        action: 'session/update',
+        payload: {
+            playerId, 
+            sessionId,
+            [key]: value, 
+        },
+    });
+    
+    const exit = ({key, value}) => send({
+        action: 'session/exit',
+        payload: {
+            playerId, 
+            sessionId,
+            [key]: value, 
+        },
+    })
+    
+    const ws = useRef<WebSocket|null>(null);
     const router = useRouter();
     
     const savedPlayerId = useLocalStorage("playerId");
@@ -27,9 +52,6 @@ export default function Home() {
     const [players, setPlayers] = useState<{ [k: string]: any }[]>([]);
     const [sessionId, setSessionId] = useState();
 
-    console.log('saved id = ', savedPlayerId);
-    console.log('active id = ', playerId);
-    
     useEffect(() => {
         if (ws.current) {
             console.log('websocket is already initialized');
@@ -56,15 +78,8 @@ export default function Home() {
                     break
                 }
                 case 'session/exit': {
-                    const { players } = data.payload;
-                    const player = players.find(player => player.playerId === playerId);
-                    const { isActive } = player;
-                
-                    if (!isActive) {
-                        setPlayers([]);
-                        setSessionId(null);
-                    }
-                    
+                    setPlayers([]);
+                    setSessionId(null);
                     break;
                 }
                 default: 
@@ -74,39 +89,14 @@ export default function Home() {
         }
         
         ws.current.onopen = () => setConnected(true);
-    
+
+        ws.current.onclose = () => exit({ key: 'isActive', value: false })
+
         return () => ws?.current.close();
+        
     }, []);
 
     useEffect(() =>  connected && !playerId && send({ action: 'player/getId' }), [connected]);
-
-    const create = () => send({ 
-        action: 'session/create',
-        payload: { playerId },
-    });
-
-    const join = (sessionId) => send({ 
-        action: 'session/join', 
-        payload: { playerId, sessionId },
-    });
-
-    const update = ({key, value}) => send({
-        action: 'session/update',
-        payload: {
-            playerId, 
-            sessionId,
-            [key]: value, 
-        },
-    });
-
-    const exit = ({key, value}) => send({
-        action: 'session/exit',
-        payload: {
-            playerId, 
-            sessionId,
-            [key]: value, 
-        },
-    })
 
     useEffect(() => sessionId && router.push(`/#${sessionId}`, undefined, { shallow: true }), [sessionId]);
 
@@ -114,16 +104,13 @@ export default function Home() {
         return <Error cause="ws" />
     }
 
-    if (sessionId) {
-        return (
-            <div>
-                <Session playerId={playerId} sessionId={sessionId} players={players} update={update} exit={exit}/>
-            </div>
-            
-        )
-    }
-
     return (
-        <MainPage create={create} join={join} playerId={playerId} /> 
+        (sessionId) ? <Session 
+        playerId={playerId} 
+        sessionId={sessionId} 
+        players={players} 
+        update={update} 
+        exit={exit}/>: 
+        <MainPage create={create} join={join} playerId={playerId} />  
     )
 }
