@@ -6,17 +6,12 @@ import { WebSocketServer } from 'ws';
 
 const wsCache = new Map();
 
-const actions = {
-    exit: 'session/exit',
-    update: 'session/update',
-}
-
 const broadcast = (data) => {
     let resultString = JSON.stringify(data);
     const payload = data.payload
     data.payload.players.forEach((player) => {    
         const wsPlayer = wsCache.get(player.playerId)
-        const result = JSON.stringify({ action: actions.update, payload })
+        const result = JSON.stringify({ action: 'session/update', payload })
 
         wsPlayer && !player.isActive && wsPlayer.send(resultString)
         !wsPlayer && !player.isActive && console.log('Player deactivated')
@@ -62,13 +57,13 @@ const app = async () => {
             setTimeout( async function () {
                 if (!wsCache.has(playerId)) {
                     const payload = await handleAction({ 
-                        action: actions.exit, 
+                        action: 'session/exit', 
                         payload: { 
                             playerId, 
                             sessionId: session 
                         }}, db, ws);
 
-                    broadcast({ action: actions.exit, payload })
+                    broadcast({ action: 'session/exit', payload })
                 }
             }, 1000*5)
 
