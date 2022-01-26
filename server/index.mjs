@@ -3,6 +3,8 @@ import { handleAction } from './actions/index.mjs';
 import { getConfig } from './config/index.mjs';
 import { createConnection } from './db/index.mjs';
 import { WebSocketServer } from 'ws';
+import { arrayBuffer } from 'stream/consumers';
+import { PassThrough } from 'stream';
 
 const wsCache = new Map();
 
@@ -10,14 +12,20 @@ const broadcast = (data) => {
     let resultString = JSON.stringify(data);
     const payload = data.payload
     data.payload.players.forEach((player) => {                
-        const wsPlayer = wsCache.get(player.playerId);
+        const wsPlayer = wsCache.get(player.playerId)
 
         if (data.action == 'session/exit' && wsPlayer && player.isActive === false) {
             wsPlayer.send(resultString)
+        } else if (data.action == 'player/terminate' && player.isActive === false && !wsPlayer) {
+            console.log('Player was deactivated in session')
         } else {
             const result = {action: 'session/update' , payload}
-
-            wsPlayer.send(JSON.stringify(result))
+            try {
+                wsPlayer.send(JSON.stringify(result))
+            } catch (e) {
+                console.log('Player not in game yet')
+                PassThrough
+            }
         }
     });
 }
@@ -27,6 +35,7 @@ const app = async () => {
     const wss = new WebSocketServer(config.ws);
     const client = await createConnection(config.db);
     const db = client.db();
+    let session;
 
     wss.on('connection', ws => {
         const cacheIt = async arrayBuffer => {
@@ -52,8 +61,22 @@ const app = async () => {
                 console.log('socket was not cached');
                 return;
             }
-
+            
             wsCache.delete(playerId);
+
+            setTimeout( async function () {
+                if (!wsCache.has(playerId)) {
+                    const payload = await handleAction({ 
+                        action: 'player/terminate', 
+                        payload: { 
+                            playerId, 
+                            sessionId: session 
+                        }}, db, ws);
+
+                    broadcast({ action: 'player/terminate', payload })
+                }
+            }, 1000*10)
+
             
             console.log(playerId, 'removed from cache due to closed connection');
 
@@ -63,7 +86,7 @@ const app = async () => {
 
         ws.on('message', async arrayBuffer => {
             const data = arrayBufferToJSON(arrayBuffer);
-    
+
             if (!data) {
                 return console.log("Wrong data: ", arrayBuffer.toString());
             };
@@ -81,6 +104,7 @@ const app = async () => {
                 case 'session/create':
                 case 'session/exit': {
                     const payload = await handleAction(data, db, ws);
+                    session = payload.sessionId
 
                     broadcast({action: data.action, payload})
                     break
