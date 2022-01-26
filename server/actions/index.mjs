@@ -11,7 +11,6 @@ export const handleAction = async (data, db) => {
         case 'session/join':
             return joinSession(data.payload, db);
         case 'session/exit':
-        case 'player/terminate':
             return exitSession(data.payload, db);
         case 'player/getId':
             return getIdentifier();

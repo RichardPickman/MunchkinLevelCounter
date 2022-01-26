@@ -9,7 +9,6 @@ const wsCache = new Map();
 const actions = {
     exit: 'session/exit',
     update: 'session/update',
-    terminate: 'player/terminate',
 }
 
 const broadcast = (data) => {
@@ -19,8 +18,8 @@ const broadcast = (data) => {
         const wsPlayer = wsCache.get(player.playerId)
         const result = JSON.stringify({ action: actions.update, payload })
 
-        data.action == actions.exit && wsPlayer && !player.isActive && wsPlayer.send(resultString)
-        data.action == actions.terminate && !player.isActive && !wsPlayer && console.log('Player deactivated')
+        wsPlayer && !player.isActive && wsPlayer.send(resultString)
+        !wsPlayer && !player.isActive && console.log('Player deactivated')
         
         wsPlayer && player.isActive && wsPlayer.send(result)
     });
@@ -63,13 +62,13 @@ const app = async () => {
             setTimeout( async function () {
                 if (!wsCache.has(playerId)) {
                     const payload = await handleAction({ 
-                        action: actions.terminate, 
+                        action: actions.exit, 
                         payload: { 
                             playerId, 
                             sessionId: session 
                         }}, db, ws);
 
-                    broadcast({ action: actions.terminate, payload })
+                    broadcast({ action: actions.exit, payload })
                 }
             }, 1000*5)
 
