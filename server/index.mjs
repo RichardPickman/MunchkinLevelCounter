@@ -9,13 +9,11 @@ const wsCache = new Map();
 const broadcast = (data) => {
     let resultString = JSON.stringify(data);
     const payload = data.payload
-    data.payload.players.forEach((player) => {    
+    payload.players.forEach((player) => {    
         const wsPlayer = wsCache.get(player.playerId)
         const result = JSON.stringify({ action: 'session/update', payload })
 
         wsPlayer && !player.isActive && wsPlayer.send(resultString)
-        !wsPlayer && !player.isActive && console.log('Player deactivated')
-        
         wsPlayer && player.isActive && wsPlayer.send(result)
     });
 }
@@ -62,7 +60,7 @@ const app = async () => {
                             playerId, 
                             sessionId: session 
                         }}, db, ws);
-
+                    
                     broadcast({ action: 'session/exit', payload })
                 }
             }, 1000*5)

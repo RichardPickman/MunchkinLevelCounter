@@ -1,19 +1,31 @@
 import styles from './Controls.module.css'
 
-export const Controls = ({ name,  value, onClick }) => {
-    const isLevelDown = !(name === 'level' && value === 1)
-    const isLevelUp = !(name === 'level' && value === 10)
+export const Controls = ({ name,  value, onEnter }) => {
+    const isLevelDown = (name === 'level' && value === 1)
+    const isLevelUp = (name === 'level' && value === 10)
+    const hasControls = !!onEnter
     
 
-    const onUp = () => onClick({ key: name, value: value + 1}) 
-    const onDown = () => onClick({ key: name, value: value -1})
+    const onUp = () => onEnter({ key: name, value: value + 1}) 
+    const onDown = () => onEnter({ key: name, value: value -1})
     
 
     return (
-        <div className={styles.controls}>
-            {isLevelUp && <button onClick={onUp}>+</button>}
-            {isLevelDown && <button onClick={onDown}>-</button>}
+        <div className={styles.level}>
+            <p style={{ margin: '0px' }}>{name}</p>
+            { hasControls && <button onClick={onUp} className={styles.btn} disabled={isLevelUp}>
+                <svg className={styles.svg}>
+                    <use xlinkHref='./sprite.svg#up'></use>
+                </svg>
+            </button>}
+            <p>{value}</p>
+            { hasControls && <button onClick={onDown} className={styles.btn} disabled={isLevelDown}>
+                <svg className={styles.svg}>
+                    <use xlinkHref="/sprite.svg#down"></use>
+                </svg>
+            </button>}
         </div>
+        
     )
 };
 

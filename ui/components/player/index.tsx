@@ -26,21 +26,19 @@ export const Player = ({ onEnter, onExit, playerId, isOwner, color, isActive, ..
     const hasControls = !!onEnter
     
     return (
-        <div style={{background: color}}>
-            <Role isOwner={isOwner} />  
-            
-            <p> playerId: {playerId}</p>
-            <p> Total power: <strong>{sum(props)}</strong></p>
-            <div>
+        <div className={styles.playerBlock}  style={{ width: '100%', height: '100%' }}>
+            <div className={styles.player}>
+                <p> Total power: <strong>{sum(props)}</strong></p>
+            </div>
+            <div className={styles.stats}>
                 {Object.entries(props).map(([key, value]) => (
-                    <div key={key} className={ styles.playerBlock }>
-                        <p>{key}: {value}</p>
-                        { hasControls && <Controls name={key} value={value} onClick={onEnter} />}
-                    </div>
+                <Controls name={key} value={value} onEnter={onEnter}/>
                 ))}
             </div>
-            { hasControls && <button onClick={() => onEnter({ key: 'temporaryBonus', value: 0})}>Next turn</button>}
-            { hasControls && <Home onExit={onExit} />}
+            <div className={styles.controls}>
+                { hasControls && <button onClick={() => onEnter({ key: 'temporaryBonus', value: 0})} className={styles.ctrl}>Next turn</button>}
+                { hasControls && <Home onExit={onExit} />}
+            </div>
         </div>
     );
 };

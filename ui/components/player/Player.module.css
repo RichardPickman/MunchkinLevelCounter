@@ -1,4 +1,38 @@
 .playerBlock {
+    display: block;
+    max-width: 250px;
+    max-height: 350px;
+    min-width: 250px;
+    min-height: 350px;
+    
+    background-color: #FACBAF;
+    border: 10px solid #672600;
+    border-radius: 25px;
+}
+
+.player {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10%;
+    align-items: center;
+}
+
+.stats {
     display: flex;
     justify-content: center;
+    align-items: center;
+}
+
+.controls {
+    display: flex;
+    gap: 15px;
+    padding: 20px 15px;
+    margin: 0 auto;
+}
+
+.ctrl {
+    background-color: #672600;
+    color: #FACBAF;
+    width: 100%;
+    height: 50%;
 }

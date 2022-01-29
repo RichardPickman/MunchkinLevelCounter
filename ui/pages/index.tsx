@@ -5,6 +5,9 @@ import { useLocalStorage } from '../hooks/useLocalStorage/index';
 import { MainPage } from '../components/mainpage/index';
 import { Error } from '../components/error/index';
 import { Session } from '../components/session/index';
+import { ERRORS } from '../../server/constants/index.mjs';
+
+import styles from '../styles/Main.module.css'
 
 
 export default function Home() {
@@ -34,18 +37,20 @@ export default function Home() {
         },
     });
     
-    const exit = ({key, value}) => send({
+    const exit = (stats) => {
+        router.push('/', undefined, { shallow: true })      
+        send({
         action: 'session/exit',
         payload: {
             playerId, 
             sessionId,
-            [key]: value, 
+            stats, 
         },
     })
+};
     
     const ws = useRef<WebSocket|null>(null);
     const router = useRouter();
-    
     const savedPlayerId = useLocalStorage("playerId");
     const [connected, setConnected] = useState(false);
     const [playerId, setPlayerId] = useState(savedPlayerId);
@@ -90,7 +95,7 @@ export default function Home() {
         
         ws.current.onopen = () => setConnected(true);
 
-        ws.current.onclose = () => exit({ key: 'isActive', value: false })
+        ws.current.onclose = () => exit({ isActive: false })
 
         return () => ws?.current.close();
         
@@ -101,16 +106,16 @@ export default function Home() {
     useEffect(() => sessionId && router.push(`/#${sessionId}`, undefined, { shallow: true }), [sessionId]);
 
     if (!connected) {
-        return <Error cause="ws" />
+        return <Error cause={ ERRORS.WS } />
     }
-
+    
     return (
-        (sessionId) ? <Session 
-        playerId={playerId} 
-        sessionId={sessionId} 
-        players={players} 
-        update={update} 
-        exit={exit}/>: 
+        (sessionId) ? <div className={styles.gamers}><Session 
+        playerId={playerId}
+        sessionId={sessionId}
+        players={players}
+        update={update}
+        exit={exit} /></div>: 
         <MainPage create={create} join={join} playerId={playerId} />  
     )
 }

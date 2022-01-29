@@ -1,14 +1,14 @@
 import { useRouter } from "next/router"
+import styles from './Index.module.css'
 
 
 export const Home = ({ onExit }) => {
     const router = useRouter()
     const returnHome = () => {
-        onExit({key: 'isActive', value: false})
-        router.push('/', undefined, { shallow: true })
+        onExit({ isActive: false })
     }
 
     return (
-        <button onClick={returnHome}> Home </button>
+        <button onClick={returnHome} className={styles.ctrl}> Home </button>
     )
 }
