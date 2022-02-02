@@ -13,8 +13,8 @@
 .player {
     display: flex;
     flex-direction: column;
-    padding-top: 10%;
     align-items: center;
+    margin-top: 15px;
 }
 
 .stats {
@@ -23,16 +23,25 @@
     align-items: center;
 }
 
+.otherStat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
 .controls {
     display: flex;
-    gap: 15px;
-    padding: 20px 15px;
-    margin: 0 auto;
+    margin: auto 15px;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
 }
 
 .ctrl {
     background-color: #672600;
     color: #FACBAF;
-    width: 100%;
+    width: 60%;
     height: 50%;
 }

@@ -1,18 +1,17 @@
 import styles from './Controls.module.css'
 
 export const Controls = ({ name,  value, onEnter }) => {
+    const titles = { 'level': 'Level', 'equipment': 'Equipment', 'temporaryBonus': 'Bonus' }
     const isLevelDown = (name === 'level' && value === 1)
     const isLevelUp = (name === 'level' && value === 10)
     const hasControls = !!onEnter
-    
 
-    const onUp = () => onEnter({ key: name, value: value + 1}) 
-    const onDown = () => onEnter({ key: name, value: value -1})
+    const onUp = () => onEnter({ key: name, value: value + 1 }) 
+    const onDown = () => onEnter({ key: name, value: value - 1 })
     
-
-    return (
+    const currentPlay = (
         <div className={styles.level}>
-            <p style={{ margin: '0px' }}>{name}</p>
+            <p style={{ margin: '0px' }}>{titles[`${name}`]}</p>
             { hasControls && <button onClick={onUp} className={styles.btn} disabled={isLevelUp}>
                 <svg className={styles.svg}>
                     <use xlinkHref='./sprite.svg#up'></use>
@@ -25,7 +24,15 @@ export const Controls = ({ name,  value, onEnter }) => {
                 </svg>
             </button>}
         </div>
-        
     )
+
+    const otherPlayer = (
+        <div className={styles.stats}>
+            <p style={{ margin: '0px' }}>{titles[`${name}`]}</p>
+            <p>{value}</p>
+        </div>
+    )
+
+    return  (hasControls) ? currentPlay : otherPlayer
 };
 
