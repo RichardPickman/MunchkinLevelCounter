@@ -67,6 +67,10 @@
 
 .success {
     transition: 0.6s;
-    display: none;
+    display: block;
     color: forestgreen;
+}
+
+.setInvisible {
+    display: none;
 }

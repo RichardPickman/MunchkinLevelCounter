@@ -1,6 +1,16 @@
 .ctrl {
-    background-color: #672600;
-    color: #FACBAF;
-    width: 60%;
-    height: 50%;
+    background-color:white;
+    color: black;
+    width: 90px;
+    height: 40px;
+    margin: auto 30% auto auto;
+    border: none;
+
   }
+
+.header {
+    display: flex;
+    height: 60px;
+    align-items: center;
+    background-color: dimgray;
+}

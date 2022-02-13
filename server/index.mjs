@@ -23,7 +23,6 @@ const app = async () => {
     const wss = new WebSocketServer(config.ws);
     const client = await createConnection(config.db);
     const db = client.db();
-    let session;
 
     wss.on('connection', ws => {
         const cacheIt = async arrayBuffer => {
@@ -54,12 +53,11 @@ const app = async () => {
 
             setTimeout( async function () {
                 if (!wsCache.has(playerId)) {
+                    const sessionId = await await handleAction({ action: 'session/getSessionId', payload: { playerId }}, db);
                     const payload = await handleAction({ 
                         action: 'session/exit', 
-                        payload: { 
-                            playerId, 
-                            sessionId: session 
-                        }}, db, ws);
+                        payload: { playerId, sessionId }
+                    }, db);
                     
                     broadcast({ action: 'session/exit', payload })
                 }
@@ -92,7 +90,6 @@ const app = async () => {
                 case 'session/create':
                 case 'session/exit': {
                     const payload = await handleAction(data, db, ws);
-                    session = payload.sessionId
 
                     broadcast({action: data.action, payload})
                     break

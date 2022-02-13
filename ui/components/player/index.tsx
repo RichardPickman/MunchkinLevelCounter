@@ -1,12 +1,10 @@
 import { Controls } from '../controls/index';
-import { Home } from '../home/index';
 import { sum } from './helpers/index'
 import styles from './Player.module.css';
 
 // Props is local type for your component props 
 type Props = {
     onEnter: ({ key: string, value: unknown }) => void,
-    onExit: ({ key: string, value: unknown }) => void,
     playerId: string, 
     isOwner: boolean,
     color: string, 
@@ -15,14 +13,8 @@ type Props = {
     equipment: number,
     temporaryBonus: number,
 }
-
-const Role = ({ isOwner }) => (
-    <strong>
-        {isOwner ? 'Власть имущий' : 'Холоп'}
-    </strong>
-);
  
-export const Player = ({ onEnter, onExit, playerId, isOwner, color, isActive, ...props }: Props) => {
+export const Player = ({ onEnter, playerId, isOwner, color, isActive, ...props }: Props) => {
     const hasControls = !!onEnter
     
     return (
@@ -42,7 +34,6 @@ export const Player = ({ onEnter, onExit, playerId, isOwner, color, isActive, ..
             </div>}
             { hasControls && <div className={styles.controls}>
                 <button onClick={() => onEnter({ key: 'temporaryBonus', value: 0})} className={styles.ctrl}>Next turn</button>
-                <Home onExit={onExit} />
             </div>}
         </div>
     );

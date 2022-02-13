@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useLocalStorage } from '../hooks/useLocalStorage/index';
 import { MainPage } from '../components/mainpage/index';
 import { Error } from '../components/error/index';
+import { Home as ReturnHome }  from '../components/home/index';
 import { Session } from '../components/session/index';
 import { ERRORS } from '../../server/constants/index.mjs';
 
@@ -110,12 +111,14 @@ export default function Home() {
     }
     
     return (
-        (sessionId) ? <div className={styles.gamers}><Session 
-        playerId={playerId}
-        sessionId={sessionId}
-        players={players}
-        update={update}
-        exit={exit} /></div>: 
+        (sessionId) ? <div className={styles.gamers}>
+            <ReturnHome onExit={exit} />
+            <Session 
+                playerId={playerId}
+                sessionId={sessionId}
+                players={players}
+                update={update}
+                exit={exit} /></div>:
         <MainPage create={create} join={join} playerId={playerId} />  
     )
 }
