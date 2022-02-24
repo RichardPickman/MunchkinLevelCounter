@@ -21,6 +21,8 @@
     "ws": "^8.4.2"
   },
   "devDependencies": {
+    "@swc/cli": "^0.1.55",
+    "@swc/core": "^1.2.144",
     "@types/node": "16.11.9",
     "@types/react": "17.0.36",
     "eslint": "7",

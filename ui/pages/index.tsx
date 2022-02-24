@@ -29,12 +29,12 @@ export default function Home() {
         payload: { playerId, sessionId },
     });
     
-    const update = ({key, value}) => send({
+    const update = (data) => send({
         action: 'session/update',
         payload: {
             playerId, 
             sessionId,
-            [key]: value, 
+            ...data, 
         },
     });
     

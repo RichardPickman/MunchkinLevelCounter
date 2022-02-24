@@ -1,5 +1,5 @@
 import { Controls } from '../controls/index';
-import { sum } from './helpers/index'
+import { properData, sum } from '../helpers/helpers'
 import styles from './Player.module.css';
 
 // Props is local type for your component props 
@@ -22,14 +22,14 @@ export const Player = ({ onEnter, playerId, isOwner, color, isActive, ...props }
             <div className={styles.player}>
                 <p> Total power: <strong>{sum(props)}</strong></p>
             </div>
-            {hasControls && <div className={styles.stats}>
-                {Object.entries(props).map(([key, value]) => (
-                <Controls name={key} value={value} onEnter={onEnter}/>
-                ))}
+            {hasControls && 
+            <div className={styles.stats}>
+                {Object.entries(props).map(([key, value], index) => <Controls name={key} value={value} onEnter={onEnter} key={index} />)}
             </div>}
-            {!hasControls && <div className={styles.otherStat}>
-                {Object.entries(props).map(([key, value]) => (
-                <Controls name={key} value={value} onEnter={onEnter}/>
+            {!hasControls && 
+            <div className={styles.otherStat}>
+                {Object.entries(props).map(([key, value], index) => (
+                <Controls name={key} value={value} onEnter={onEnter} key={index} />
                 ))}
             </div>}
             { hasControls && <div className={styles.controls}>

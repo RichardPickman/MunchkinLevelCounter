@@ -1,4 +1,5 @@
 import styles from './Controls.module.css'
+import { properData } from '../helpers/helpers'
 
 export const Controls = ({ name,  value, onEnter }) => {
     const titles = { 'level': 'Level', 'equipment': 'Equipment', 'temporaryBonus': 'Bonus' }
@@ -6,8 +7,8 @@ export const Controls = ({ name,  value, onEnter }) => {
     const isLevelUp = (name === 'level' && value === 10)
     const hasControls = !!onEnter
 
-    const onUp = () => onEnter({ key: name, value: value + 1 }) 
-    const onDown = () => onEnter({ key: name, value: value - 1 })
+    const onUp = () => onEnter(properData({ key: name, value: value + 1 })) 
+    const onDown = () => onEnter(properData({ key: name, value: value - 1 }))
     
     const currentPlay = (
         <div className={styles.level}>
