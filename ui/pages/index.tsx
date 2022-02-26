@@ -2,11 +2,12 @@ import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
 import { useLocalStorage } from '../hooks/useLocalStorage/index';
-import { MainPage } from '../components/mainpage/index';
-import { Error } from '../components/error/index';
-import { Home as ReturnHome }  from '../components/home/index';
+import { MainPage } from '../components/mainpage/mainpage';
+import { Error } from '../components/error/error';
+import { Home as ReturnHome }  from '../components/home/home';
 import { Session } from '../components/session/index';
 import { ERRORS } from '../../server/constants/index.mjs';
+import { PlayerType } from '../../types/index'
 
 import styles from '../styles/Main.module.css'
 
@@ -29,12 +30,12 @@ export default function Home() {
         payload: { playerId, sessionId },
     });
     
-    const update = (data) => send({
+    const update = (data: Partial<PlayerType>) => send({
         action: 'session/update',
         payload: {
             playerId, 
             sessionId,
-            ...data, 
+            ...data,
         },
     });
     
@@ -112,7 +113,7 @@ export default function Home() {
     
     return (
         (sessionId) ? <div className={styles.gamers}>
-            <ReturnHome onExit={exit} />
+            <ReturnHome onClick={exit} />
             <Session 
                 playerId={playerId}
                 sessionId={sessionId}

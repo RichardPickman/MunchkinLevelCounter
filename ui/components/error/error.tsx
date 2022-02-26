@@ -1,4 +1,4 @@
-import styles from './Index.module.css'
+import styles from './Error.module.css'
 
 
 export const Error = ({ cause }) => {

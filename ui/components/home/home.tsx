@@ -1,8 +1,8 @@
-import styles from './Index.module.css'
+import styles from './Home.module.css'
 
-export const Home = ({ onExit }) => {
+export const Home = ({ onClick }) => {
     const returnHome = () => {
-        onExit({ isActive: false })
+        onClick({ isActive: false })
     }
 
     return (

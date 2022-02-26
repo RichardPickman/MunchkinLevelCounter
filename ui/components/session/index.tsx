@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { Player } from '../player/index'
+import { Player } from '../player/player'
 import styles from './Index.module.css';
 
 export const Session = ({ playerId, sessionId, players, update, }: {[k:string]: any}) => {
@@ -34,7 +34,7 @@ export const Session = ({ playerId, sessionId, players, update, }: {[k:string]: 
                 </div>
             </div>
             <div className={styles.gamers}>
-                {players.map(( player, index ) => player.isActive && <Player onEnter={ playerId === player.playerId && update } {...player} key={index} />)}
+                {players.map(( player, index ) => player.isActive && <Player onClick={ playerId === player.playerId && update } {...player} key={index} />)}
             </div>
         </div>
     )

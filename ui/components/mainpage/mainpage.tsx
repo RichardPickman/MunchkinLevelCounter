@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import styles from './Home.module.css'
+import styles from './Mainpage.module.css'
 
 
 export const MainPage = ({ create, join, playerId }: {[k:string]: any}) => {
