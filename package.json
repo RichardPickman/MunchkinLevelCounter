@@ -33,11 +33,8 @@
   "description": "This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).",
   "version": "1.0.0",
   "main": "ui/next.config.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/RichardPickman/MunchkinLevelCounter.git"
-  },
-  "author": "",
+  "repository": "git+https://github.com/RichardPickman/MunchkinLevelCounter.git",
+  "author": "RichardPickman",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/RichardPickman/MunchkinLevelCounter/issues"

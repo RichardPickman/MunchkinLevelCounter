@@ -1,6 +1,7 @@
 import { arrayBufferToJSON } from './helpers.mjs';
 import { handleAction } from './actions/index.mjs';
 import { getConfig } from './config/index.mjs';
+import { getSessionByPlayerId } from './resolvers/index.mjs';
 import { createConnection } from './db/index.mjs';
 import { WebSocketServer } from 'ws';
 
@@ -41,19 +42,16 @@ const app = async () => {
 
         ws.on('close', () => {
             const cacheItems = Array.from(wsCache.entries());
-            const cachedSocket = cacheItems.find(([key, value]) => value === ws);
+            const cachedSocket = cacheItems.find(([, value]) => value === ws);
             const [playerId] = cachedSocket || [];
 
-            if (!playerId) {
-                console.log('socket was not cached');
-                return;
-            }
+            if (!playerId) return console.log('socket was not cached');
             
             wsCache.delete(playerId);
 
-            setTimeout( async function () {
+            setTimeout(async function () {
                 if (!wsCache.has(playerId)) {
-                    const sessionId = await await handleAction({ action: 'session/getSessionId', payload: { playerId }}, db);
+                    const sessionId = await getSessionByPlayerId({ playerId }, db);
                     const payload = await handleAction({ 
                         action: 'session/exit', 
                         payload: { playerId, sessionId }
@@ -73,16 +71,13 @@ const app = async () => {
         ws.on('message', async arrayBuffer => {
             const data = arrayBufferToJSON(arrayBuffer);
 
-            if (!data) {
-                return console.log("Wrong data: ", arrayBuffer.toString());
-            };
+            if (!data) return console.log("Wrong data: ", arrayBuffer.toString());
 
             switch (data.action) {
                 case 'player/getId': {
-                    const payload = await handleAction(data, db, ws);
+                    const payload = await handleAction(data, db);
 
                     ws.send(JSON.stringify({action: data.action, payload}))
-
                     break
                 }
                 case 'session/update':
