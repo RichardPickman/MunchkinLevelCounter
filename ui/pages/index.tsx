@@ -5,7 +5,7 @@ import { useLocalStorage } from '../hooks/useLocalStorage/index';
 import { MainPage } from '../components/mainpage/mainpage';
 import { Error } from '../components/error/error';
 import { Home as ReturnHome }  from '../components/home/home';
-import { Session } from '../components/session/index';
+import { Session } from '../components/session/session';
 import { ERRORS } from '../../server/constants/index.mjs';
 import { PlayerType } from '../../types/index'
 
