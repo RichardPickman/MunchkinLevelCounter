@@ -57,9 +57,9 @@ const app = async () => {
                         action: 'session/exit', 
                         payload: { playerId, sessionId }
                     }, db);
-                    const hasContainActivePlayers = payload.players.some(elem => elem.isActive)
+                    const hasActivePlayers = payload.players.some(elem => elem.isActive)
                     
-                    if (hasContainActivePlayers) broadcast({ action: 'session/exit', payload })
+                    if (hasActivePlayers) broadcast({ action: 'session/exit', payload })
                     
                 }
             }, 1000*5)
