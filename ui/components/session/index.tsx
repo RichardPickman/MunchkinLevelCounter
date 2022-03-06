@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Player } from '../player/player'
+import { Player } from '../player/index'
 import styles from './Session.module.css';
 
 export const Session = ({ playerId, sessionId, players, update, }: {[k:string]: any}) => {

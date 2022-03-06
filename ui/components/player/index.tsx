@@ -1,4 +1,4 @@
-import { Controls } from '../controls/controls';
+import { Controls } from '../controls';
 import { sum } from './helpers/index'
 import { PlayerType } from '../../../types/index'
 import styles from './Player.module.css';

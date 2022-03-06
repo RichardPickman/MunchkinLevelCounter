@@ -1,13 +1,13 @@
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
-import { useLocalStorage } from '../hooks/useLocalStorage/index';
-import { MainPage } from '../components/mainpage/mainpage';
-import { Error } from '../components/error/error';
-import { Home as ReturnHome }  from '../components/home/home';
-import { Session } from '../components/session/session';
+import { useLocalStorage } from '../hooks/useLocalStorage/';
+import { MainPage } from '../components/mainpage/';
+import { Error } from '../components/error/';
+import { Home as ReturnHome }  from '../components/home/';
+import { Session } from '../components/session/';
 import { ERRORS } from '../../server/constants/index.mjs';
-import { PlayerType } from '../../types/index'
+import { PlayerType } from '../../types/'
 
 import styles from '../styles/Main.module.css'
 
