@@ -1,6 +1,6 @@
 import { Controls } from '../controls';
 import { sum } from './helpers/index'
-import { PlayerType } from '../../../types/index'
+import { Player as PlayerType } from '../../../types/index'
 import styles from './Player.module.css';
 
 interface Props extends PlayerType {

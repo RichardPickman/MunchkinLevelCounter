@@ -1,5 +1,5 @@
 
-export interface PlayerType {
+export interface Player {
     playerId: string, 
     isOwner: boolean, 
     color: string, 

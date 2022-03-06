@@ -7,7 +7,7 @@ import { Error } from '../components/error/';
 import { Home as ReturnHome }  from '../components/home/';
 import { Session } from '../components/session/';
 import { ERRORS } from '../../server/constants/index.mjs';
-import { PlayerType } from '../../types/'
+import { Player as PlayerType } from '../../types/'
 
 import styles from '../styles/Main.module.css'
 
