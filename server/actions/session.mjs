@@ -21,13 +21,15 @@ export const joinSession = async ({ sessionId, playerId }, db) => {
     const session = await getSession({ sessionId, playerId }, db)
     const player = createPlayer(playerId)
     
-    if (session) return await updateSession({ sessionId, playerId, isActive: true }, db)
+    if (session) {
+        return await updateSession({ sessionId, playerId, isActive: true }, db)
+    }
 
     const result = await insertPlayer({ sessionId }, player, db)
 
     return result
 }
 
-export const updateSession = async ({ sessionId, playerId, ...changes }, db) => await updateSessionState({ sessionId, playerId, ...changes }, db)
+export const updateSession = ({ sessionId, playerId, ...changes }, db) => updateSessionState({ sessionId, playerId, ...changes }, db)
 
-export const exitSession = async ({ sessionId, playerId }, db) => await updateSession({ sessionId, playerId, isActive: false }, db)
+export const exitSession = ({ sessionId, playerId }, db) => updateSession({ sessionId, playerId, isActive: false }, db)

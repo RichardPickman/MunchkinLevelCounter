@@ -13,7 +13,7 @@ export const insertSession = async ( session, db ) => {
     const result = await db.collection('sessions').insertOne(session);
 
     return result
-}
+};
 
 export const insertPlayer = async ({ sessionId }, player, db) => {
     const result = await db.collection('sessions').findOneAndUpdate(
@@ -22,7 +22,7 @@ export const insertPlayer = async ({ sessionId }, player, db) => {
     { returnDocument: 'after'});
 
     return result.value
-}
+};
 
 export const updateSessionState = async ({sessionId, playerId, ...changes}, db) => {
     const result = await db.collection('sessions').findOneAndUpdate(
@@ -31,10 +31,10 @@ export const updateSessionState = async ({sessionId, playerId, ...changes}, db) 
         { 
             arrayFilters: [{ "elem.playerId": playerId }],
             returnDocument: 'after',   
-    })
+    });
 
     return result.value
-}
+};
 
 export const getSessionByPlayerId = async ({ playerId }, db) => {
     const result = await db.collection('sessions').findOne({

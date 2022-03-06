@@ -49,6 +49,7 @@ const app = async () => {
             
             wsCache.delete(playerId);
 
+            // Check if player has connected to game with same id
             setTimeout(async function () {
                 if (!wsCache.has(playerId)) {
                     const sessionId = await getSessionByPlayerId({ playerId }, db);
@@ -56,8 +57,10 @@ const app = async () => {
                         action: 'session/exit', 
                         payload: { playerId, sessionId }
                     }, db);
+                    const hasContainActivePlayers = payload.players.some(elem => elem.isActive)
                     
-                    broadcast({ action: 'session/exit', payload })
+                    if (hasContainActivePlayers) broadcast({ action: 'session/exit', payload })
+                    
                 }
             }, 1000*5)
 
