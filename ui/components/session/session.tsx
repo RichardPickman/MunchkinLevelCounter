@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { Player } from '../player/player'
 import styles from './Session.module.css';
 
