@@ -45,3 +45,10 @@
     width: 60%;
     height: 50%;
 }
+
+.opponentCard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
