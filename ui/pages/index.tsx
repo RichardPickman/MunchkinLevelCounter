@@ -1,35 +1,64 @@
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
 
-import { useLocalStorage } from '../hooks/useLocalStorage/index';
-import { MainPage } from '../components/mainpage/index';
-import { Error } from '../components/error/index';
-import { Session } from '../components/session/index';
+import { useLocalStorage } from '../hooks/useLocalStorage/';
+import { MainPage } from '../components/mainpage/';
+import { Error } from '../components/error/';
+import { Home as ReturnHome }  from '../components/home/';
+import { Session } from '../components/session/';
+import { ERRORS } from '../../server/constants/index.mjs';
+import { PlayerType } from '../../types/'
+
+import styles from '../styles/Main.module.css'
 
 
 export default function Home() {
-    const ws = useRef<WebSocket|null>(null);
-
+    
     const send = data => {
         const message = JSON.stringify(data);
-
-        if (ws.current) {
-            console.log('sending message:', message);
-            ws.current.send(message);
-        }
+        
+        if (ws.current) ws.current.send(message);
     };
-
-    const router = useRouter();
     
+    const create = () => send({ 
+        action: 'session/create', 
+        payload: { playerId }, 
+    });
+    
+    const join = (sessionId) => send({ 
+        action: 'session/join', 
+        payload: { playerId, sessionId },
+    });
+    
+    const update = (data: Partial<PlayerType>) => send({
+        action: 'session/update',
+        payload: {
+            playerId, 
+            sessionId,
+            ...data,
+        },
+    });
+    
+    const exit = (stats) => {
+        router.push('/', undefined, { shallow: true })      
+        send({
+        action: 'session/exit',
+        payload: {
+            playerId, 
+            sessionId,
+            stats, 
+        },
+    })
+};
+    
+    const ws = useRef<WebSocket|null>(null);
+    const router = useRouter();
     const savedPlayerId = useLocalStorage("playerId");
     const [connected, setConnected] = useState(false);
     const [playerId, setPlayerId] = useState(savedPlayerId);
     const [players, setPlayers] = useState<{ [k: string]: any }[]>([]);
     const [sessionId, setSessionId] = useState();
 
-    console.log('saved id = ', savedPlayerId);
-    console.log('active id = ', playerId);
-    
     useEffect(() => {
         if (ws.current) {
             console.log('websocket is already initialized');
@@ -53,7 +82,13 @@ export default function Home() {
                 case 'session/create': {
                     setPlayers(data.payload.players)
                     setSessionId(data.payload.sessionId)
-                    break }
+                    break
+                }
+                case 'session/exit': {
+                    setPlayers([]);
+                    setSessionId(null);
+                    break;
+                }
                 default: 
                     console.log('Action not supported')
                     break
@@ -61,49 +96,30 @@ export default function Home() {
         }
         
         ws.current.onopen = () => setConnected(true);
-    
+
+        ws.current.onclose = () => exit({ isActive: false })
+
         return () => ws?.current.close();
+        
     }, []);
 
     useEffect(() =>  connected && !playerId && send({ action: 'player/getId' }), [connected]);
 
-    const create = () => send({ 
-        action: 'session/create',
-        payload: { playerId },
-    });
-
-    const join = (sessionId) => send({ 
-        action: 'session/join', 
-        payload: { playerId, sessionId },
-    });
-
-    const update = ({key, value}) => send({
-        action: 'session/update',
-        payload: {
-            playerId, 
-            sessionId,
-            [key]: value, 
-        },
-    });
-
     useEffect(() => sessionId && router.push(`/#${sessionId}`, undefined, { shallow: true }), [sessionId]);
 
     if (!connected) {
-        return (
-            <Error />
-        )
+        return <Error cause={ ERRORS.WS } />
     }
-
-    if (sessionId) {
-        return (
-            <div>
-                <Session playerId={playerId} sessionId={sessionId} players={players} update={update} />
-            </div>
-            
-        )
-    }
-
+    
     return (
-            <MainPage create={create} join={join} playerId={playerId} /> 
+        (sessionId) ? <div className={styles.gamers}>
+            <ReturnHome onClick={exit} />
+            <Session 
+                playerId={playerId}
+                sessionId={sessionId}
+                players={players}
+                update={update}
+                exit={exit} /></div>:
+        <MainPage create={create} join={join} playerId={playerId} />  
     )
 }

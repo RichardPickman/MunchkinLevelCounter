@@ -1,45 +1,37 @@
-import { Controls } from '../controls/index';
-import { Home } from '../home/index';
+import { Controls } from '../controls';
 import { sum } from './helpers/index'
+import { PlayerType } from '../../../types/index'
 import styles from './Player.module.css';
 
-// Props is local type for your component props 
-type Props = {
-    onClick: ({ key: string, value: unknown }) => void,
-    playerId: string, 
-    isOwner: boolean,
-    color: string, 
-    isInside: boolean, // @todo: find a better name
-    level: number,
-    equipment: number,
-    temporaryBonus: number,
+interface Props extends PlayerType {
+    onClick: (data: Partial<PlayerType>) => void
 }
-
-const Role = ({ isOwner }) => (
-    <strong>
-        {isOwner ? 'Власть имущий' : 'Холоп'}
-    </strong>
-);
  
-export const Player = ({ onClick, playerId, isOwner, color, isInside, ...props }: Props) => {
+export const Player = ({ onClick, playerId, isOwner, color, isActive, ...props }: Props) => {
     const hasControls = !!onClick
+    const titles = { 'level': 'Level', 'equipment': 'Equipment', 'temporaryBonus': 'Bonus' }
     
     return (
-        <div style={{background: color}}>
-            <Role isOwner={isOwner} />  
-            
-            <p> playerId: {playerId}</p>
-            <p> Total power: <strong>{sum(props)}</strong></p>
-            <div>
-                {Object.entries(props).map(([key, value]) => (
-                    <div key={key} className={ styles.playerBlock }>
-                        <p>{key}: {value}</p>
-                        { hasControls && <Controls name={key} value={value} onClick={onClick} />}
-                    </div>)
-                )}
+        <div className={styles.playerBlock}  style={{ width: '100%', height: '100%' }}>
+            <div className={styles.player}>
+                <p> Total power: <strong>{sum(props)}</strong></p>
             </div>
-            { hasControls && <button onClick={() => onClick({ key: 'temporaryBonus', value: 0})}>Next turn</button>}
-            { hasControls && <Home onClick={onClick} />}
+            { hasControls && 
+            <div className={styles.stats}>
+                {Object.entries(props).map(([key, value], index) => <Controls name={key} value={value} onClick={onClick} key={index} />)}
+            </div>}
+            { !hasControls && 
+            <div className={styles.otherStat}>
+                {Object.entries(props).map(([key, value], index) => (
+                    <div className={styles.opponentCard} key={index}>
+                        <p style={{ margin: '0px' }}>{titles[`${key}`]}</p>
+                        <p>{value}</p>
+                    </div>
+                ))}
+            </div>}
+            { hasControls && <div className={styles.controls}>
+                <button onClick={ () => onClick({ 'temporaryBonus': 0 }) } className={styles.ctrl}>Next turn</button>
+            </div>}
         </div>
     );
 };

@@ -1,6 +1,7 @@
 import { arrayBufferToJSON } from './helpers.mjs';
 import { handleAction } from './actions/index.mjs';
 import { getConfig } from './config/index.mjs';
+import { getSessionByPlayerId } from './resolvers/index.mjs';
 import { createConnection } from './db/index.mjs';
 import { WebSocketServer } from 'ws';
 
@@ -8,12 +9,13 @@ const wsCache = new Map();
 
 const broadcast = (data) => {
     let resultString = JSON.stringify(data);
-    data.payload.players.forEach((player) => {                
-        const wsPlayer = wsCache.get(player.playerId);
+    const payload = data.payload
+    payload.players.forEach((player) => {    
+        const wsPlayer = wsCache.get(player.playerId)
+        const result = JSON.stringify({ action: 'session/update', payload })
 
-        if (wsPlayer) {
-            wsPlayer.send(resultString);
-        }
+        wsPlayer && !player.isActive && wsPlayer.send(resultString)
+        wsPlayer && player.isActive && wsPlayer.send(result)
     });
 }
 
@@ -31,7 +33,6 @@ const app = async () => {
 
             console.log('LOG: Connection established')
 
-            // this one fixes the problem with cached as undefined and empty join screen
             if (playerId && !wsCache.has(playerId)) {
                 console.log('cached as', playerId);
                 wsCache.set(playerId, ws);
@@ -41,15 +42,28 @@ const app = async () => {
 
         ws.on('close', () => {
             const cacheItems = Array.from(wsCache.entries());
-            const cachedSocket = cacheItems.find(([key, value]) => value === ws);
+            const cachedSocket = cacheItems.find(([, value]) => value === ws);
             const [playerId] = cachedSocket || [];
 
-            if (!playerId) {
-                console.log('socket was not cached');
-                return;
-            }
-
+            if (!playerId) return console.log('socket was not cached');
+            
             wsCache.delete(playerId);
+
+            // Check if player has connected to game with same id
+            setTimeout(async function () {
+                if (!wsCache.has(playerId)) {
+                    const sessionId = await getSessionByPlayerId({ playerId }, db);
+                    const payload = await handleAction({ 
+                        action: 'session/exit', 
+                        payload: { playerId, sessionId }
+                    }, db);
+                    const hasActivePlayers = payload.players.some(elem => elem.isActive)
+                    
+                    if (hasActivePlayers) broadcast({ action: 'session/exit', payload })
+                    
+                }
+            }, 1000*5)
+
             
             console.log(playerId, 'removed from cache due to closed connection');
 
@@ -59,22 +73,20 @@ const app = async () => {
 
         ws.on('message', async arrayBuffer => {
             const data = arrayBufferToJSON(arrayBuffer);
-    
-            if (!data) {
-                return console.log("Wrong data: ", arrayBuffer.toString());
-            };
+
+            if (!data) return console.log("Wrong data: ", arrayBuffer.toString());
 
             switch (data.action) {
                 case 'player/getId': {
-                    const payload = await handleAction(data, db, ws);
+                    const payload = await handleAction(data, db);
 
                     ws.send(JSON.stringify({action: data.action, payload}))
-
                     break
                 }
                 case 'session/update':
                 case 'session/join':
-                case 'session/create': {
+                case 'session/create':
+                case 'session/exit': {
                     const payload = await handleAction(data, db, ws);
 
                     broadcast({action: data.action, payload})

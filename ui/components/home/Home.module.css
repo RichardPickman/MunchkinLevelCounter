@@ -1,0 +1,16 @@
+.ctrl {
+    background-color:white;
+    color: black;
+    width: 90px;
+    height: 40px;
+    margin: auto 30% auto auto;
+    border: none;
+
+  }
+
+.header {
+    display: flex;
+    height: 60px;
+    align-items: center;
+    background-color: dimgray;
+}

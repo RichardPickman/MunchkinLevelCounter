@@ -1,9 +1,10 @@
+import styles from './Error.module.css'
 
 
-export const Error = () => {
+export const Error = ({ cause }) => {
     return (
-        <div>
-            <div> Not connected to WebSocket. Try again! </div> 
+        <div className={styles.error}>
+            <p className={styles.message}>{ cause }</p>
         </div>
     )
-}
+};

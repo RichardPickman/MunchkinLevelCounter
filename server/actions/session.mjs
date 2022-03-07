@@ -1,15 +1,7 @@
 import { createPlayer } from "./helpers.mjs";
-import { getSessionId, getUpdateFields, getPlayerId} from "../helpers.mjs";
+import { getSessionId } from "../helpers.mjs";
+import { insertSession, getSession, insertPlayer, updateSessionState } from "../resolvers/index.mjs";
 
-
-const getSession = async ({ sessionId, playerId }, db) => {
-    const result = await db.collection('sessions').findOne({ 
-        sessionId, 
-        players: { $elemMatch: { playerId } } 
-    });
-
-    return result
-};
 
 export const createSession = async (data, db) => {
     const player = createPlayer(data.playerId, true);
@@ -20,41 +12,24 @@ export const createSession = async (data, db) => {
         players: [player],
     }
 
-    const result = await db.collection('sessions').insertOne(session);
+    await insertSession(session, db)
 
-    return result.insertedId ? session : null 
+    return session
 }
 
 export const joinSession = async ({ sessionId, playerId }, db) => {
     const session = await getSession({ sessionId, playerId }, db)
+    const player = createPlayer(playerId)
     
     if (session) {
-        return updateSession({ 
-            sessionId,
-            playerId,
-            isInside: true,
-        }, db) 
+        return await updateSession({ sessionId, playerId, isActive: true }, db)
     }
 
-    const result = await db.collection('sessions').findOneAndUpdate(
-        { sessionId }, 
-        { $push: { players: createPlayer(playerId) }},
-        { returnDocument: 'after'}
-    );
+    const result = await insertPlayer({ sessionId }, player, db)
 
-    return result.value
+    return result
 }
 
-export const updateSession = async ({ sessionId, playerId, ...changes }, db) => {
-    const result = await db.collection('sessions').findOneAndUpdate(
-        { sessionId },
-        { $set: getUpdateFields(changes) },
-        { 
-            arrayFilters: [{ "elem.playerId": playerId }],
-            returnDocument: 'after',   
-        }
-    );
+export const updateSession = ({ sessionId, playerId, ...changes }, db) => updateSessionState({ sessionId, playerId, ...changes }, db)
 
-    return result.value
-};
-
+export const exitSession = ({ sessionId, playerId }, db) => updateSession({ sessionId, playerId, isActive: false }, db)

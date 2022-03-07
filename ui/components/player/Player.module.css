@@ -1,4 +1,54 @@
 .playerBlock {
+    display: block;
+    max-width: 250px;
+    max-height: 350px;
+    min-width: 250px;
+    min-height: 350px;
+    
+    background-color: #FACBAF;
+    border: 10px solid #672600;
+    border-radius: 25px;
+}
+
+.player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.stats {
     display: flex;
     justify-content: center;
+    align-items: center;
+}
+
+.otherStat {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+.controls {
+    display: flex;
+    margin: auto 15px;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+.ctrl {
+    background-color: #672600;
+    color: #FACBAF;
+    width: 60%;
+    height: 50%;
+}
+
+.opponentCard {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
