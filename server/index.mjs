@@ -1,7 +1,7 @@
 import { arrayBufferToJSON } from './helpers.mjs';
 import { handleAction } from './actions/index.mjs';
 import { getConfig } from './config/index.mjs';
-import { getSessionByPlayerId } from './resolvers/index.mjs';
+import { getSessionByPlayerId, getSessionBySessionId } from './resolvers/index.mjs';
 import { createConnection } from './db/index.mjs';
 import { WebSocketServer } from 'ws';
 
@@ -9,20 +9,46 @@ import { createServer } from 'http'
 import { parse } from 'url'
 import next from 'next';
 
+const config = getConfig();
 const dev = process.env.NODE_ENV !== 'production'
-const hostname = 'localhost'
-const port = 8080
+const hostname = config.ws.address
+const port = config.ws.port
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
+
+const wsCache  = new Map();
+
+const broadcast = (data) => {
+    let resultString = JSON.stringify(data);
+    const payload = data.payload
+    payload.players.forEach((player) => {
+        const wsPlayer = wsCache.get(player.playerId)
+        const result = JSON.stringify({ action: 'session/update', payload })
+
+        wsPlayer && !player.isActive && wsPlayer.send(resultString)
+        wsPlayer && player.isActive && wsPlayer.send(result)
+    });
+};
+
 
 app.prepare().then(async () => {
     const server = createServer((req, res) => handle(req, res, parse(req.url, true)))
     const wss = new WebSocketServer({ noServer: true })
-
-    const config = getConfig();
+    
     const client = await createConnection(config.db);
     const db = client.db();
-
+    
+    const getWebSocketsBySessionId = async (sessionId) => {
+        const players = await getSessionBySessionId(db, sessionId)
+        const wsPlayers = []
+        
+        for (let [, value] of Object.entries(players)) {
+            wsCache.has(value.playerId) && wsPlayers.push(value.playerId)
+        }
+        
+        return wsPlayers
+    };
+    
     wss.on('connection', ws => {
         const cacheIt = async arrayBuffer => {
             const data = arrayBufferToJSON(arrayBuffer);
@@ -47,7 +73,7 @@ app.prepare().then(async () => {
             
             wsCache.delete(playerId);
 
-            // Check if player has connected to game with same id
+            // Delete if player hasn't connected to game with same id
             setTimeout(async function () {
                 if (!wsCache.has(playerId)) {
                     const sessionId = await getSessionByPlayerId({ playerId }, db);
@@ -62,7 +88,6 @@ app.prepare().then(async () => {
                 }
             }, 1000*5)
 
-            
             console.log(playerId, 'removed from cache due to closed connection');
 
         });
@@ -112,18 +137,5 @@ app.prepare().then(async () => {
 })
 
 
-const wsCache = new Map();
-
-const broadcast = (data) => {
-    let resultString = JSON.stringify(data);
-    const payload = data.payload
-    payload.players.forEach((player) => {    
-        const wsPlayer = wsCache.get(player.playerId)
-        const result = JSON.stringify({ action: 'session/update', payload })
-
-        wsPlayer && !player.isActive && wsPlayer.send(resultString)
-        wsPlayer && player.isActive && wsPlayer.send(result)
-    });
-}
 
 

@@ -9,6 +9,14 @@ export const getSession = async ({ sessionId, playerId }, db) => {
     return result
 };
 
+export const getSessionBySessionId = async (db, sessionId) => {
+    const result = await db.collection('sessions').findOne({
+        sessionId
+    })
+
+    return result.players
+};
+
 export const insertSession = async ( session, db ) => {
     const result = await db.collection('sessions').insertOne(session);
 
