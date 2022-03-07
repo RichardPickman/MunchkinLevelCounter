@@ -6,8 +6,8 @@ import { MainPage } from '../components/mainpage/';
 import { Error } from '../components/error/';
 import { Home as ReturnHome }  from '../components/home/';
 import { Session } from '../components/session/';
-import { ERRORS } from '../../server/constants/index.mjs';
-import { Player as PlayerType } from '../../types/'
+import { ERRORS } from '../server/constants/index.mjs';
+import { Player as PlayerType } from '../types/'
 
 import styles from '../styles/Main.module.css'
 
@@ -40,16 +40,16 @@ export default function Home() {
     });
     
     const exit = (stats) => {
-        router.push('/', undefined, { shallow: true })      
+        router.push('/', undefined, { shallow: true })
         send({
-        action: 'session/exit',
-        payload: {
-            playerId, 
-            sessionId,
-            stats, 
-        },
-    })
-};
+            action: 'session/exit',
+            payload: {
+                playerId, 
+                sessionId,
+                stats, 
+            },
+        })
+    };
     
     const ws = useRef<WebSocket|null>(null);
     const router = useRouter();
@@ -103,7 +103,7 @@ export default function Home() {
         
     }, []);
 
-    useEffect(() =>  connected && !playerId && send({ action: 'player/getId' }), [connected]);
+    useEffect(() => connected && !playerId && send({ action: 'player/getId' }), [connected]);
 
     useEffect(() => sessionId && router.push(`/#${sessionId}`, undefined, { shallow: true }), [sessionId]);
 

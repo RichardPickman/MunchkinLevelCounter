@@ -5,23 +5,21 @@ import { getSessionByPlayerId } from './resolvers/index.mjs';
 import { createConnection } from './db/index.mjs';
 import { WebSocketServer } from 'ws';
 
-const wsCache = new Map();
+import { createServer } from 'http'
+import { parse } from 'url'
+import next from 'next';
 
-const broadcast = (data) => {
-    let resultString = JSON.stringify(data);
-    const payload = data.payload
-    payload.players.forEach((player) => {    
-        const wsPlayer = wsCache.get(player.playerId)
-        const result = JSON.stringify({ action: 'session/update', payload })
+const dev = process.env.NODE_ENV !== 'production'
+const hostname = 'localhost'
+const port = 8080
+const app = next({ dev, hostname, port })
+const handle = app.getRequestHandler()
 
-        wsPlayer && !player.isActive && wsPlayer.send(resultString)
-        wsPlayer && player.isActive && wsPlayer.send(result)
-    });
-}
+app.prepare().then(async () => {
+    const server = createServer((req, res) => handle(req, res, parse(req.url, true)))
+    const wss = new WebSocketServer({ noServer: true })
 
-const app = async () => {
     const config = getConfig();
-    const wss = new WebSocketServer(config.ws);
     const client = await createConnection(config.db);
     const db = client.db();
 
@@ -95,8 +93,37 @@ const app = async () => {
             }
         });
     });
-    
+
     console.log('LOG: Server has been started')
+
+    server.on('upgrade', function (req, socket, head) {
+        const { pathname } = parse(req.url, true);
+        if (pathname !== '/_next/webpack-hmr') {
+            wss.handleUpgrade(req, socket, head, function done(ws) {
+                wss.emit('connection', ws, req);
+            });
+        }
+    });
+
+    server.listen(port, (err) => {
+        if (err) throw err
+        console.log(`Ready on http://${hostname}:${port} and ws://localhost:${port}`)
+    })
+})
+
+
+const wsCache = new Map();
+
+const broadcast = (data) => {
+    let resultString = JSON.stringify(data);
+    const payload = data.payload
+    payload.players.forEach((player) => {    
+        const wsPlayer = wsCache.get(player.playerId)
+        const result = JSON.stringify({ action: 'session/update', payload })
+
+        wsPlayer && !player.isActive && wsPlayer.send(resultString)
+        wsPlayer && player.isActive && wsPlayer.send(result)
+    });
 }
 
-app()
+
