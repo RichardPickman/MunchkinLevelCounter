@@ -31,5 +31,3 @@ export const joinSession = async ({ sessionId, playerId }, db) => {
 }
 
 export const updateSession = ({ sessionId, playerId, ...changes }, db) => updateSessionState({ sessionId, playerId, ...changes }, db)
-
-export const exitSession = ({ sessionId, playerId }, db) => updateSession({ sessionId, playerId, isActive: false }, db)

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Player } from '../player/index'
 import styles from './Session.module.css';
 
-export const Session = ({ playerId, sessionId, players, update, }: {[k:string]: any}) => {
+export const Session = ({ playerId, sessionId, players, update }: {[k:string]: any}) => {
     const [isCopied, setIsCopied] = useState(false);
     const classList = [styles.copy, isCopied ? styles.success : styles.copying ].join(' ');
 

@@ -69,9 +69,9 @@ export default function Home() {
         
         ws.current.onmessage = (message) => {
             const data = JSON.parse(message.data)
-
+            
             console.log('message received:', data);
-
+            
             switch (data.action) {
                 case 'player/getId':
                     localStorage.setItem("playerId", data.payload.playerId)
@@ -80,13 +80,12 @@ export default function Home() {
                 case 'session/update':
                 case 'session/join':
                 case 'session/create': {
-                    setPlayers(data.payload.players)
-                    setSessionId(data.payload.sessionId)
-                    break
-                }
-                case 'session/exit': {
-                    setPlayers([]);
-                    setSessionId(null);
+                    const { isActive } = data.payload.players.find(elem => elem.playerId === playerId) ?? {}
+                    console.log(isActive)
+
+                    setPlayers(isActive ? data.payload.players : []);
+                    setSessionId(isActive ? data.payload.sessionId : null);
+
                     break;
                 }
                 default: 
@@ -113,13 +112,12 @@ export default function Home() {
     
     return (
         (sessionId) ? <div className={styles.gamers}>
-            <ReturnHome onClick={exit} />
+            <ReturnHome onClick={update} />
             <Session 
                 playerId={playerId}
                 sessionId={sessionId}
                 players={players}
-                update={update}
-                exit={exit} /></div>:
+                update={update} /></div>:
         <MainPage create={create} join={join} playerId={playerId} />  
     )
 }
