@@ -18,18 +18,14 @@ const handle = app.getRequestHandler()
 
 const wsCache  = new Map();
 
-const broadcast = (data) => {
-    let resultString = JSON.stringify(data);
-    const payload = data.payload
-    payload.players.forEach((player) => {
-        const wsPlayer = wsCache.get(player.playerId)
-        const result = JSON.stringify({ action: 'session/update', payload })
+const broadcast = (data, wsList) => {
+    let result = JSON.stringify(data);
+    wsList.forEach((player) => {
+        const wsPlayer = wsCache.get(player)
 
-        wsPlayer && !player.isActive && wsPlayer.send(resultString)
-        wsPlayer && player.isActive && wsPlayer.send(result)
+        wsPlayer.send(result)
     });
 };
-
 
 app.prepare().then(async () => {
     const server = createServer((req, res) => handle(req, res, parse(req.url, true)))
@@ -38,11 +34,10 @@ app.prepare().then(async () => {
     const client = await createConnection(config.db);
     const db = client.db();
     
-    const getWebSocketsBySessionId = async (sessionId) => {
-        const players = await getSessionBySessionId(db, sessionId)
+    const getWebSocketsBySession = async (session) => {
         const wsPlayers = []
         
-        for (let [, value] of Object.entries(players)) {
+        for (let [, value] of Object.entries(session.players)) {
             wsCache.has(value.playerId) && wsPlayers.push(value.playerId)
         }
         
@@ -78,12 +73,13 @@ app.prepare().then(async () => {
                 if (!wsCache.has(playerId)) {
                     const sessionId = await getSessionByPlayerId({ playerId }, db);
                     const payload = await handleAction({ 
-                        action: 'session/exit', 
-                        payload: { playerId, sessionId }
+                        action: 'session/update', 
+                        payload: { playerId, sessionId, isActive: false }
                     }, db);
-                    const hasActivePlayers = payload.players.some(elem => elem.isActive)
                     
-                    if (hasActivePlayers) broadcast({ action: 'session/exit', payload })
+                    const hasActivePlayers = await getWebSocketsBySession(payload)
+                    
+                    if (hasActivePlayers) broadcast({ action: 'session/update', payload }, hasActivePlayers)
                     
                 }
             }, 1000*5)
@@ -104,22 +100,22 @@ app.prepare().then(async () => {
                     const payload = await handleAction(data, db);
 
                     ws.send(JSON.stringify({action: data.action, payload}))
-                    break
+
+                    break;
                 }
                 case 'session/update':
                 case 'session/join':
-                case 'session/create':
-                case 'session/exit': {
-                    const payload = await handleAction(data, db, ws);
+                case 'session/create':{
+                    const payload = await handleAction(data, db);
+                    const wsList = await getWebSocketsBySession(payload)
 
-                    broadcast({action: data.action, payload})
-                    break
+                    broadcast({action: data.action, payload}, wsList)
+
+                    break;
                 }
             }
         });
     });
-
-    console.log('LOG: Server has been started')
 
     server.on('upgrade', function (req, socket, head) {
         const { pathname } = parse(req.url, true);
