@@ -1,4 +1,4 @@
-import { getColor } from "../helpers.mjs";
+import { getColor } from "../helpers";
 
 
 export const createPlayer = (playerId, isOwner = false) => ({

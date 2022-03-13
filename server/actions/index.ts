@@ -1,5 +1,5 @@
-import { createSession, updateSession, joinSession } from './session.mjs'
-import { getIdentifier } from './player.mjs';
+import { createSession, updateSession, joinSession } from './session'
+import { getIdentifier } from './player';
 
 
 export const handleAction = async (data, db) => {
