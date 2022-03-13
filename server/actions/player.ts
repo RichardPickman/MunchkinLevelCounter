@@ -1,4 +1,4 @@
-import { getPlayerId } from "../helpers.mjs";
+import { getPlayerId } from "../helpers";
 
 export const getIdentifier = async () => {
     const player = getPlayerId()

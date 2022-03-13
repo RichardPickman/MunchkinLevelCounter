@@ -1,30 +1,32 @@
-import { arrayBufferToJSON } from './helpers.mjs';
-import { handleAction } from './actions/index.mjs';
-import { getConfig } from './config/index.mjs';
-import { getSessionByPlayerId, getSessionBySessionId } from './resolvers/index.mjs';
-import { createConnection } from './db/index.mjs';
+
+import { arrayBufferToJSON } from './helpers';
+import { handleAction } from './actions/index';
+import { getConfig } from './config/index';
+import { getSessionByPlayerId } from './resolvers/index';
+import { createConnection } from './db/index';
 import { WebSocketServer } from 'ws';
 
 import { createServer } from 'http'
 import { parse } from 'url'
 import next from 'next';
 
+interface Session {
+    players: Object;
+    playerId: string;
+}
+
 const config = getConfig();
-const dev = process.env.NODE_ENV !== 'production'
-const hostname = config.ws.address
-const port = config.ws.port
+const dev: boolean = process.env.NODE_ENV !== 'production'
+const hostname: string = config.ws.address
+const port: number = config.ws.port
 const app = next({ dev, hostname, port })
 const handle = app.getRequestHandler()
 
 const wsCache  = new Map();
 
-const broadcast = (data, wsList) => {
+const broadcast = (data: any, websockets: WebSocket[]) => {
     let result = JSON.stringify(data);
-    wsList.forEach((player) => {
-        const wsPlayer = wsCache.get(player)
-
-        wsPlayer.send(result)
-    });
+    websockets.forEach((websocket) => websocket.send(result));
 };
 
 app.prepare().then(async () => {
@@ -34,11 +36,11 @@ app.prepare().then(async () => {
     const client = await createConnection(config.db);
     const db = client.db();
     
-    const getWebSocketsBySession = async (session) => {
+    const getWebSocketsBySession = async (session: Session) => {
         const wsPlayers = []
         
         for (let [, value] of Object.entries(session.players)) {
-            wsCache.has(value.playerId) && wsPlayers.push(value.playerId)
+            wsCache.has(value.playerId) && wsPlayers.push(wsCache.get(value.playerId))
         }
         
         return wsPlayers
@@ -126,8 +128,7 @@ app.prepare().then(async () => {
         }
     });
 
-    server.listen(port, (err) => {
-        if (err) throw err
+    server.listen(port, () => {
         console.log(`Ready on http://${hostname}:${port} and ws://localhost:${port}`)
     })
 })
