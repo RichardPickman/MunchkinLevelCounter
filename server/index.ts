@@ -5,15 +5,12 @@ import { getConfig } from './config/index';
 import { getSessionByPlayerId } from './resolvers/index';
 import { createConnection } from './db/index';
 import { WebSocketServer } from 'ws';
+import { Player } from '../types'
 
 import { createServer } from 'http'
 import { parse } from 'url'
 import next from 'next';
 
-interface Session {
-    players: Object;
-    playerId: string;
-}
 
 const config = getConfig();
 const dev: boolean = process.env.NODE_ENV !== 'production'
@@ -36,10 +33,10 @@ app.prepare().then(async () => {
     const client = await createConnection(config.db);
     const db = client.db();
     
-    const getWebSocketsBySession = async (session: Session) => {
+    const getWebSocketsBySession = async (session) => {
         const wsPlayers = []
         
-        for (let [, value] of Object.entries(session.players)) {
+        for (let [, value] of Object.entries<Player>(session.players)) {
             wsCache.has(value.playerId) && wsPlayers.push(wsCache.get(value.playerId))
         }
         
