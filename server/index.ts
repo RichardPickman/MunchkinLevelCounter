@@ -16,14 +16,15 @@ const config = getConfig();
 const app = next({
     dev: process.env.NODE_ENV !== 'production',
     hostname: config.ws.address,
-    port: config.ws.port })
+    port: config.ws.port,
+})
 const handle = app.getRequestHandler()
 
 const wsCache  = new Map();
 
 app.prepare().then(async () => {
-    const server = createServer((req, res) => handle(req, res, parse(req.url, true)))
-    const wss = new WebSocketServer({ noServer: true })
+    const server = createServer((req, res) => handle(req, res, parse(req.url, true)));
+    const wss = new WebSocketServer({ noServer: true });
 
     const client = await createConnection(config.db);
     const db = client.db();
@@ -34,7 +35,7 @@ app.prepare().then(async () => {
             const payload = data.payload || {};
             const { playerId } = payload;
 
-            console.log('LOG: Connection established')
+            console.log('LOG: Connection established');
 
             if (playerId && !wsCache.has(playerId)) {
                 console.log('cached as', playerId);
@@ -62,7 +63,7 @@ app.prepare().then(async () => {
                     }, db);
 
 
-                    const websockets = await getWebSocketsBySession(wsCache, payload)
+                    const websockets = await getWebSocketsBySession(wsCache, payload);
 
                     if (websockets) broadcast(websockets, { action: 'session/update', payload })
 
@@ -84,7 +85,7 @@ app.prepare().then(async () => {
                 case 'player/getId': {
                     const payload = await handleAction(data, db);
 
-                    ws.send(JSON.stringify({action: data.action, payload}))
+                    ws.send(JSON.stringify({action: data.action, payload}));
 
                     break;
                 }
@@ -94,7 +95,7 @@ app.prepare().then(async () => {
                     const payload = await handleAction(data, db);
                     const websockets = getWebSocketsBySession(wsCache, payload)
 
-                    broadcast(websockets, {action: data.action, payload})
+                    broadcast(websockets, {action: data.action, payload});
 
                     break;
                 }

@@ -23,7 +23,7 @@ const getDbConfig = (): dbConfig => ({
 
 const getServerConfig = (): ServerConfig => ({
     port: Number(process.env.WS_SERVER_PORT),
-    address: process.env.WS_ADRESS,
+    address: process.env.WS_ADDRESS,
 });
 
 

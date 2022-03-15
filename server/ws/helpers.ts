@@ -6,11 +6,13 @@ export const broadcast = (websockets: WebSocket[], data: any) => {
 };
 
 export const getWebSocketsBySession = (wsCache, { players }) => {
-    const wsPlayers = []
+    const websockets = [];
 
     players.forEach(player => {
-        wsCache.has(player.playerId) && wsPlayers.push(wsCache.get(player.playerId))
+        if (wsCache.has(player.playerId)) {
+            websockets.push(wsCache.get(player.playerId));
+        }
     })
 
-    return wsPlayers
+    return websockets;
 };
