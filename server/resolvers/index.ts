@@ -1,4 +1,4 @@
-import { getUpdateFields } from '../helpers.mjs';
+import { getUpdateFields } from '../helpers';
 
 export const getSession = async ({ sessionId, playerId }, db) => {
     const result = await db.collection('sessions').findOne({ 
@@ -7,6 +7,14 @@ export const getSession = async ({ sessionId, playerId }, db) => {
     });
 
     return result
+};
+
+export const getSessionBySessionId = async (db, sessionId) => {
+    const result = await db.collection('sessions').findOne({
+        sessionId
+    })
+
+    return result.players
 };
 
 export const insertSession = async ( session, db ) => {

@@ -1,6 +1,6 @@
-import { createPlayer } from "./helpers.mjs";
-import { getSessionId } from "../helpers.mjs";
-import { insertSession, getSession, insertPlayer, updateSessionState } from "../resolvers/index.mjs";
+import { createPlayer } from "./helpers";
+import { getSessionId } from "../helpers";
+import { insertSession, getSession, insertPlayer, updateSessionState } from "../resolvers/index";
 
 
 export const createSession = async (data, db) => {
@@ -31,5 +31,3 @@ export const joinSession = async ({ sessionId, playerId }, db) => {
 }
 
 export const updateSession = ({ sessionId, playerId, ...changes }, db) => updateSessionState({ sessionId, playerId, ...changes }, db)
-
-export const exitSession = ({ sessionId, playerId }, db) => updateSession({ sessionId, playerId, isActive: false }, db)
