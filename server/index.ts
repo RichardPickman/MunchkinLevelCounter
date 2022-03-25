@@ -30,18 +30,16 @@ app.prepare().then(async () => {
     const db = client.db();
 
     wss.on('connection', ws => {
-        const cacheIt = async arrayBuffer => {
-            const data = arrayBufferToJSON(arrayBuffer);
-            const payload = data.payload || {};
-            const { playerId } = payload;
+        const cacheIt = data => {
+            const players = data.players
 
-            console.log('LOG: Connection established');
-
-            if (playerId && !wsCache.has(playerId)) {
-                console.log('cached as', playerId);
-                wsCache.set(playerId, ws);
-                ws.off('message', cacheIt);
-            }
+            players.forEach(({ playerId }) => {
+                if (playerId && !wsCache.has(playerId)) {
+                    console.log('cached as', playerId);
+                    wsCache.set(playerId, ws);
+                    ws.off('message', cacheIt);
+                }
+            })
         }
 
         ws.on('close', () => {
@@ -74,32 +72,17 @@ app.prepare().then(async () => {
 
         });
 
-        ws.on('message', cacheIt);
-
         ws.on('message', async arrayBuffer => {
             const data = arrayBufferToJSON(arrayBuffer);
 
             if (!data) return console.log("Wrong data: ", arrayBuffer.toString());
 
-            switch (data.action) {
-                case 'player/getId': {
-                    const payload = await handleAction(data, db);
+            const payload = await handleAction(data, db);
+            cacheIt(payload)
+            const websockets = getWebSocketsBySession(wsCache, payload);
 
-                    ws.send(JSON.stringify({action: data.action, payload}));
+            broadcast(websockets, {action: data.action, payload});
 
-                    break;
-                }
-                case 'session/update':
-                case 'session/join':
-                case 'session/create':{
-                    const payload = await handleAction(data, db);
-                    const websockets = getWebSocketsBySession(wsCache, payload)
-
-                    broadcast(websockets, {action: data.action, payload});
-
-                    break;
-                }
-            }
         });
     });
 
