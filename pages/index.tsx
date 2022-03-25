@@ -55,17 +55,26 @@ export default function Home() {
 
         ws.current.onmessage = (message) => {
             const data = JSON.parse(message.data)
+            const players = data.payload.players
 
             console.log('message received:', data);
 
             switch (data.action) {
-                case 'player/getId':
-                    localStorage.setItem("playerId", data.payload.playerId)
-                    setPlayerId(data.payload.playerId)
-                    break;
-                case 'session/update':
-                case 'session/join':
                 case 'session/create': {
+                    setPlayerId((players[0]).playerId)
+                    setPlayers(data.payload.players);
+                    setSessionId(data.payload.sessionId);
+
+                    break;
+                }
+                case 'session/join': {
+                    setPlayerId((players[players.length - 1]).playerId)
+                    setPlayers(data.payload.players);
+                    setSessionId(data.payload.sessionId);
+
+                    break;
+                }
+                case 'session/update':{
                     const { isActive } = data.payload.players.find(elem => elem.playerId === playerId) ?? {}
 
                     setPlayers(isActive ? data.payload.players : []);
@@ -88,8 +97,6 @@ export default function Home() {
         return () => ws?.current.close();
 
     }, []);
-
-    useEffect(() => connected && !playerId && send({ action: 'player/getId' }), [connected]);
 
     useEffect(() => {
         const url = sessionId ? `/#${sessionId}` : '/'
