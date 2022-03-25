@@ -1,8 +1,9 @@
-const prompt = require('prompt');
-const WebSocket = require('ws');
-const { config } = require('dotenv');
+import prompt from 'prompt';
+import WebSocket from 'ws';
 
-config()
+import { getConfig } from '../../server/config';
+
+const config = getConfig()
 
 function createPlayers(amountPlayers) {
     const players = new Array(amountPlayers).fill(null);
@@ -17,25 +18,25 @@ function createPlayers(amountPlayers) {
 
 
 function setConnection(playerId, sessionId) {
-    const ws = new WebSocket(process.env.NEXT_PUBLIC_WS_HOST);
+    console.log(playerId, sessionId)
+    const ws = new WebSocket(config.bots.address);
     const template = {
         action: 'session/join',
         payload: { playerId, sessionId }
     };
 
     ws.onopen = () => {
-        ws.send(JSON.stringify(template))
+        ws.send(JSON.stringify(template));
     }
 }
 
 prompt.start()
 
 prompt.get(['sessionId', 'players'], function (err, result) {
-    const create = createPlayers(result.players)
+    const create = createPlayers(result.players);
+    console.log(create)
 
     create.forEach(player => {
-        setConnection(player, result.sessionId)
+        setConnection(player, result.sessionId);
     })
-
-
-  });
+});
