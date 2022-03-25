@@ -8,7 +8,7 @@
     "ui:lint": "next lint",
     "server:start": "node server/index.ts",
     "dev": "nodemon server/index.ts",
-    "bots": "ts-node script/index.ts"
+    "bots": "ts-node script/bots/index.ts"
   },
   "dependencies": {
     "@types/prompt": "^1.1.2",
