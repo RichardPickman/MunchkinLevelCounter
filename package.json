@@ -2,9 +2,6 @@
   "name": "munchkinlevelcounter",
   "private": true,
   "scripts": {
-    "ui:watch": "next dev",
-    "ui:build": "next build",
-    "ui:start": "next start",
     "ui:lint": "next lint",
     "server:start": "node server/index.ts",
     "dev": "nodemon server/index.ts",

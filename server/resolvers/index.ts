@@ -1,4 +1,4 @@
-import { getUpdateFields } from '../helpers';
+import { getUpdateFields } from '../../helpers';
 
 export const getSession = async ({ sessionId, playerId }, db) => {
     const result = await db.collection('sessions').findOne({ 
@@ -24,11 +24,12 @@ export const insertSession = async ( session, db ) => {
 };
 
 export const insertPlayer = async ({ sessionId }, player, db) => {
+    console.log(sessionId, player)
     const result = await db.collection('sessions').findOneAndUpdate(
     { sessionId }, 
     { $push: { players: player }},
     { returnDocument: 'after'});
-
+    
     return result.value
 };
 
@@ -49,5 +50,5 @@ export const getSessionByPlayerId = async ({ playerId }, db) => {
         players: { $elemMatch: { playerId, isActive: true } }
     });
 
-    return result.sessionId
+    return result
 };

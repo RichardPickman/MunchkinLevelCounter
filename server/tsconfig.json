@@ -3,5 +3,10 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "ES5"
-    }
+    },
+
+    "include": [
+        "../helpers",
+        "constants"
+    ]
 }

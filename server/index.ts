@@ -1,5 +1,5 @@
 
-import { arrayBufferToJSON } from './helpers';
+import { arrayBufferToJSON } from '../helpers';
 import { handleAction } from './actions/index';
 import { getConfig } from './config/index';
 import { getSessionByPlayerId } from './resolvers/index';
@@ -30,18 +30,6 @@ app.prepare().then(async () => {
     const db = client.db();
 
     wss.on('connection', ws => {
-        const cacheIt = data => {
-            const players = data.players
-
-            players.forEach(({ playerId }) => {
-                if (playerId && !wsCache.has(playerId)) {
-                    console.log('cached as', playerId);
-                    wsCache.set(playerId, ws);
-                    ws.off('message', cacheIt);
-                }
-            })
-        }
-
         ws.on('close', () => {
             const cacheItems = Array.from(wsCache.entries());
             const cachedSocket = cacheItems.find(([, value]) => value === ws);
@@ -54,16 +42,24 @@ app.prepare().then(async () => {
             // Delete if player hasn't connected to game with same id
             setTimeout(async function () {
                 if (!wsCache.has(playerId)) {
-                    const sessionId = await getSessionByPlayerId({ playerId }, db);
+                    const session = await getSessionByPlayerId({ playerId }, db);
                     const payload = await handleAction({
-                        action: 'session/update',
-                        payload: { playerId, sessionId, isActive: false }
+                        type: 'session/update',
+                        payload: {
+                            playerId,
+                            session: session.sessionId,
+                            isActive: false
+                        }
                     }, db);
 
+                    const websockets = getWebSocketsBySession(wsCache, payload);
 
-                    const websockets = await getWebSocketsBySession(wsCache, payload);
-
-                    if (websockets) broadcast(websockets, { action: 'session/update', payload })
+                    if (websockets) {
+                        broadcast(websockets, {
+                            type: 'session/update',
+                            payload,
+                        })
+                    }
 
                 }
             }, 1000*5)
@@ -73,15 +69,24 @@ app.prepare().then(async () => {
         });
 
         ws.on('message', async arrayBuffer => {
-            const data = arrayBufferToJSON(arrayBuffer);
+            const action = arrayBufferToJSON(arrayBuffer);
 
-            if (!data) return console.log("Wrong data: ", arrayBuffer.toString());
+            if (!action) {
+                console.log("Wrong action: ", arrayBuffer.toString());
+                return;
+            };
 
-            const payload = await handleAction(data, db);
-            cacheIt(payload)
-            const websockets = getWebSocketsBySession(wsCache, payload);
+            const session = await handleAction(action, db);
 
-            broadcast(websockets, {action: data.action, payload});
+            if (action.type === 'session/create' || action.type === 'session/join') {
+                const player = session.players[session.players.length - 1];
+
+                wsCache.set(player.playerId, ws);
+            }
+
+            const websockets = getWebSocketsBySession(wsCache, session);
+
+            broadcast(websockets, {type: action.type, payload: session });
 
         });
     });

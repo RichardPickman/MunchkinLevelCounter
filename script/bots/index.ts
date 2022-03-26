@@ -21,7 +21,7 @@ function setConnection(playerId, sessionId) {
     console.log(playerId, sessionId)
     const ws = new WebSocket(config.bots.address);
     const template = {
-        action: 'session/join',
+        type: 'session/join',
         payload: { playerId, sessionId }
     };
 

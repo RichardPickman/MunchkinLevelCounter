@@ -1,16 +1,13 @@
 import { createSession, updateSession, joinSession } from './session'
-import { getIdentifier } from './player';
 
 
-export const handleAction = async (data, db) => {
-    switch (data.action) {
+export const handleAction = async (action, db) => {
+    switch (action.type) {
         case 'session/create': 
-            return createSession(data.payload, db);
+            return createSession(action.payload, db);
         case 'session/update':
-            return updateSession(data.payload, db);
+            return updateSession(action.payload, db);
         case 'session/join':
-            return joinSession(data.payload, db);
-        case 'player/getId':
-            return getIdentifier();
-        }
+            return joinSession(action.payload, db);
+    }
 };

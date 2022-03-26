@@ -11,7 +11,7 @@ export const MainPage = ({ create, join, playerId }: {[k:string]: any}) => {
                 <button onClick={create}>Create game</button> 
                 <div className={styles.joining}>
                     <input ref={inputRef} placeholder='Enter id'></input>
-                    <button onClick={() => join(inputRef.current.value)} disabled={!inputRef.current?.value}>Join game</button> 
+                    <button onClick={() => join(inputRef.current.value)}>Join game</button> 
                 </div>
             </div>
         </div>
