@@ -9,5 +9,7 @@ export const handleAction = async (action, db) => {
             return updateSession(action.payload, db);
         case 'session/join':
             return joinSession(action.payload, db);
+        default: 
+            console.log('ivnvalid action: ', action)
     }
 };

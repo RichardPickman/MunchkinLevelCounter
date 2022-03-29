@@ -47,7 +47,7 @@ app.prepare().then(async () => {
                         type: 'session/update',
                         payload: {
                             playerId,
-                            session: session.sessionId,
+                            sessionId: session.sessionId,
                             isActive: false
                         }
                     }, db);

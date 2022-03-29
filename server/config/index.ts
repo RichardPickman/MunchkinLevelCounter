@@ -12,10 +12,6 @@ interface dbConfig {
     database: string
 }
 
-interface ScriptsConfig {
-    address: string,
-}
-
 config();
 
 const getDbConfig = (): dbConfig => ({
@@ -23,10 +19,6 @@ const getDbConfig = (): dbConfig => ({
     password: process.env.DB_PASSWORD,
     hostname: process.env.DB_HOST,
     database: process.env.DB_NAME,
-});
-
-const getScriptsConfig = (): ScriptsConfig => ({
-    address: process.env.NEXT_PUBLIC_WS_HOST
 });
 
 const getServerConfig = (): ServerConfig => ({
@@ -38,5 +30,4 @@ const getServerConfig = (): ServerConfig => ({
 export const getConfig = () => ({
     db: getDbConfig(),
     ws: getServerConfig(),
-    bots: getScriptsConfig(),
 });

@@ -12,7 +12,7 @@ import styles from '../styles/Main.module.css'
 import { useStore } from '../hooks/useStore';
 
 
-export default function Home() {
+function Home(props) {
     const ws = useRef<WebSocket|null>(null);
     const router = useRouter();
     const [connected, setConnected] = useState(false);
@@ -49,7 +49,7 @@ export default function Home() {
             return;
         }
 
-        ws.current = new WebSocket(process.env.NEXT_PUBLIC_WS_HOST)
+        ws.current = new WebSocket(`ws://${props.config.host}`)
 
         ws.current.onmessage = (message) => {
             const action = JSON.parse(message.data);
@@ -84,3 +84,14 @@ export default function Home() {
         <MainPage create={create} join={join} playerId={playerId} />
     )
 }
+
+
+Home.getInitialProps = (context) => {
+    return {
+        config: {
+            host: context.req.headers.host,
+        },
+    };
+};
+
+export default Home;
