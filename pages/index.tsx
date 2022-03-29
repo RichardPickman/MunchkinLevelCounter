@@ -1,48 +1,46 @@
 import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useReducer, useRef, useState } from 'react';
 
-import { useLocalStorage } from '../hooks/useLocalStorage/';
-import { MainPage } from '../components/mainpage/';
-import { Error } from '../components/error/';
-import { Home as ReturnHome }  from '../components/home/';
-import { Session } from '../components/session/';
-import { ERRORS } from '../server/constants/index.mjs';
-import { Player as PlayerType } from '../types/'
+import { MainPage } from '../components/mainpage';
+import { Error } from '../components/error';
+import { Home as ReturnHome }  from '../components/home';
+import { Session } from '../components/session';
+import { ERRORS } from '../constants';
+import { Player as PlayerType } from '../types'
 
 import styles from '../styles/Main.module.css'
+import { useStore } from '../hooks/useStore';
 
-export default function Home() {
+
+function Home(props) {
     const ws = useRef<WebSocket|null>(null);
     const router = useRouter();
-    const savedPlayerId = useLocalStorage("playerId");
     const [connected, setConnected] = useState(false);
-    const [playerId, setPlayerId] = useState(savedPlayerId);
-    const [players, setPlayers] = useState<{ [k: string]: any }[]>([]);
-    const [sessionId, setSessionId] = useState();
+    const [state, dispatch] = useStore()
 
-    const send = data => {
-        const message = JSON.stringify(data);
+    const { sessionId, playerId } = state;
+
+    const send = ({ type, ...payload }) => {
+        const message = JSON.stringify({ type, payload });
 
         if (ws.current) ws.current.send(message);
     };
 
     const create = () => send({
-        action: 'session/create',
-        payload: { playerId },
+        type: 'session/create',
+        playerId,
     });
 
     const join = (sessionId) => send({
-        action: 'session/join',
-        payload: { playerId, sessionId },
+        type: 'session/join',
+        sessionId,
     });
 
     const update = (data: Partial<PlayerType>) => send({
-        action: 'session/update',
-        payload: {
-            playerId,
-            sessionId,
-            ...data,
-        },
+        type: 'session/update',
+        playerId,
+        sessionId,
+        ...data,
     });
 
     useEffect(() => {
@@ -51,45 +49,23 @@ export default function Home() {
             return;
         }
 
-        ws.current = new WebSocket(process.env.NEXT_PUBLIC_WS_HOST)
+        ws.current = new WebSocket(`ws://${props.config.host}`)
 
         ws.current.onmessage = (message) => {
-            const data = JSON.parse(message.data)
+            const action = JSON.parse(message.data);
 
-            console.log('message received:', data);
+            dispatch(action)
 
-            switch (data.action) {
-                case 'player/getId':
-                    localStorage.setItem("playerId", data.payload.playerId)
-                    setPlayerId(data.payload.playerId)
-                    break;
-                case 'session/update':
-                case 'session/join':
-                case 'session/create': {
-                    const { isActive } = data.payload.players.find(elem => elem.playerId === playerId) ?? {}
-
-                    setPlayers(isActive ? data.payload.players : []);
-                    setSessionId(isActive ? data.payload.sessionId : null);
-
-                    break;
-                }
-                default:
-                    console.log('Action not supported')
-                    break
-            }
+            console.log('action received:', action);
         }
 
         ws.current.onopen = () => setConnected(true);
 
-        ws.current.onclose = () => {
-            update({ isActive: false })
-        };
+        ws.current.onclose = () => update({ isActive: false });
 
         return () => ws?.current.close();
 
     }, []);
-
-    useEffect(() => connected && !playerId && send({ action: 'player/getId' }), [connected]);
 
     useEffect(() => {
         const url = sessionId ? `/#${sessionId}` : '/'
@@ -104,11 +80,18 @@ export default function Home() {
     return (
         (sessionId) ? <div className={styles.gamers}>
             <ReturnHome onClick={update} />
-            <Session
-                playerId={playerId}
-                sessionId={sessionId}
-                players={players}
-                update={update} /></div>:
+            <Session {...state} update={update} /></div>:
         <MainPage create={create} join={join} playerId={playerId} />
     )
 }
+
+
+Home.getInitialProps = (context) => {
+    return {
+        config: {
+            host: context.req.headers.host,
+        },
+    };
+};
+
+export default Home;

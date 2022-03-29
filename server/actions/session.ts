@@ -1,11 +1,10 @@
-import { createPlayer } from "./helpers";
-import { getSessionId } from "../helpers";
+import { getPlayerId, getSessionId, createPlayer } from "../../helpers";
 import { insertSession, getSession, insertPlayer, updateSessionState } from "../resolvers/index";
 
 
-export const createSession = async (data, db) => {
-    const player = createPlayer(data.playerId, true);
-    let sessionId = getSessionId()
+export const createSession = async ({ playerId }, db) => {
+    const player =  createPlayer(playerId, true)
+    const sessionId = getSessionId()
     const session = {
         sessionId,
         startTime: new Date(),
@@ -18,13 +17,21 @@ export const createSession = async (data, db) => {
 }
 
 export const joinSession = async ({ sessionId, playerId }, db) => {
-    const session = await getSession({ sessionId, playerId }, db)
-    const player = createPlayer(playerId)
+    const player = createPlayer(playerId || getPlayerId())
+    
+    const session = await getSession({
+        sessionId,
+        playerId: player.playerId
+    }, db)
     
     if (session) {
-        return await updateSession({ sessionId, playerId, isActive: true }, db)
+        return await updateSession({
+            sessionId,
+            playerId: player.playerId,
+            isActive: true
+        }, db);
     }
-
+    
     const result = await insertPlayer({ sessionId }, player, db)
 
     return result

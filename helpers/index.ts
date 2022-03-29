@@ -13,6 +13,16 @@ export const getPlayerId = () => getId(8);
 
 export const getSessionId = () => getId(16);
 
+export const createPlayer = (playerId, isOwner = false) => ({
+    playerId: playerId || getPlayerId(),
+    isOwner,
+    color: getColor(),
+    level: 1,
+    equipment: 0,
+    temporaryBonus: 0,
+    isActive: true
+});
+
 export const arrayBufferToJSON = (arrayBuffer) => {
     try {
         const data = JSON.parse(arrayBuffer.toString());
