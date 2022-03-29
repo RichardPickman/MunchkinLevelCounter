@@ -5,9 +5,9 @@ export const Controls = ({ name,  value, onClick }) => {
     const hasLevelDown = (name === 'level' && value === 1)
     const hasLevelUp = (name === 'level' && value === 10)
 
-    const onUp = () => onClick({[name]: value + 1}) 
+    const onUp = () => onClick({[name]: value + 1})
     const onDown = () => onClick({[name]: value - 1})
-    
+
     return (
         <div className={styles.level}>
             <p style={{ margin: '0px' }}>{titles[`${name}`]}</p>
