@@ -1,78 +1,18 @@
-.gamers {
+.players {
     display: grid;
     grid-template-columns: auto auto auto;
     gap: 10px;
     margin-top: 15px;
 }
 
-@media(max-width: 768px) {
-    .gamers {
-        display: grid;
-        grid-template-columns: auto auto auto;
-        gap: 10px;
-        margin-top: 15px;
-    }
-}
-
-.session {
+.root {
     width: 50%;
     margin: auto;
 }
 
-@media(max-width: 768px) {
-    .session {
-        width: 100%;
-        margin: auto;
-    }
-}
-
-.idBlock {
+.sessionId {
     display: flex;
     align-items: center;
     justify-content: center;
     margin-top: 15px;
 }
-
-.id {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0 15px;
-    gap: 15px;
-    border-radius: 10px;
-    color: white;
-    background-color: dimgray;
-    border: 2px solid black;
-}
-
-.copy {
-    height: 18px;
-    width: 18px;
-
-    background: none;
-    border: none;
-    cursor: pointer;
-    text-decoration: none;
-    outline: none;
-
-    transition-duration: 0.4s;
-}
-
-.copying {
-    background-image: url('../../public/copy.svg');
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    -webkit-background-image: url('../../public/copy.svg');
-    -webkit-background-repeat: no-repeat;
-    -webkit-background-size: 100% 100%;
-}
-
-.success {
-    background-image: url('../../public/success.svg');
-    background-repeat: no-repeat;
-    background-size: 100% 100%;
-    -webkit-background-image: url('../../public/success.svg');
-    -webkit-background-repeat: no-repeat;
-    -webkit-background-size: 100% 100%;
-}
-
