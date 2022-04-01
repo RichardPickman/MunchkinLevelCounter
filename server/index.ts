@@ -20,7 +20,7 @@ const app = next({
 })
 const handle = app.getRequestHandler()
 
-const wsCache  = new Map();
+const wsCache = new Map();
 
 app.prepare().then(async () => {
     const server = createServer((req, res) => handle(req, res, parse(req.url, true)));
@@ -62,7 +62,7 @@ app.prepare().then(async () => {
                     }
 
                 }
-            }, 1000*5)
+            }, 1000 * 5)
 
             console.log(playerId, 'removed from cache due to closed connection');
 
@@ -86,7 +86,7 @@ app.prepare().then(async () => {
 
             const websockets = getWebSocketsBySession(wsCache, session);
 
-            broadcast(websockets, {type: action.type, payload: session });
+            broadcast(websockets, { type: action.type, payload: session });
 
         });
     });
