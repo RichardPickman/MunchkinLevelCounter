@@ -9,12 +9,9 @@ interface Props extends Types.Session {
     update: (args: Partial<Types.Player>) => void
 }
 
-export const Session = ({ playerId, sessionId, players, update }: { [k: string]: any }) => {
+export const Session = ({ playerId, players, update }: Props) => {
     return (
         <div className={styles.root}>
-            <div className={styles.sessionId}>
-                <Clipboard value={sessionId} />
-            </div>
             <div className={styles.players}>
                 {players.map(player => player.isActive && (
                     <Player
