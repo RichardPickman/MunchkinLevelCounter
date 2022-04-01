@@ -15,6 +15,7 @@ export const Player = ({ onClick, playerId, isOwner, color, isActive, ...props }
         <div className={styles.playerBlock}  style={{ width: '100%', height: '100%' }}>
             <div className={styles.player}>
                 <p> Total power: <strong>{sum(props)}</strong></p>
+                ID: <strong>{playerId}</strong>
             </div>
             { hasControls &&
             <div className={styles.stats}>
@@ -30,7 +31,6 @@ export const Player = ({ onClick, playerId, isOwner, color, isActive, ...props }
                 ))}
             </div>}
             { hasControls && <div className={styles.controls}>
-                <button onClick={ () => onClick({ 'temporaryBonus': 0 }) } className={styles.ctrl}>Next turn</button>
             </div>}
         </div>
     );
