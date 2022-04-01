@@ -1,9 +1,9 @@
 import { useRouter } from 'next/router';
 import { useEffect, useReducer, useRef, useState } from 'react';
 
+import { Clipboard } from '../components/clipboard';
 import { MainPage } from '../components/mainpage';
 import { Error } from '../components/error';
-import { Home as ReturnHome }  from '../components/home';
 import { Session } from '../components/session';
 import { ERRORS } from '../constants';
 import { Player as PlayerType } from '../types'
@@ -13,7 +13,7 @@ import { useStore } from '../hooks/useStore';
 
 
 function Home(props) {
-    const ws = useRef<WebSocket|null>(null);
+    const ws = useRef<WebSocket | null>(null);
     const router = useRouter();
     const [connected, setConnected] = useState(false);
     const [state, dispatch] = useStore()
@@ -74,14 +74,18 @@ function Home(props) {
     }, [sessionId])
 
     if (!connected) {
-        return <Error cause={ ERRORS.WS } />
+        return <Error cause={ERRORS.WS} />
     }
 
     return (
         (sessionId) ? <div className={styles.gamers}>
-            <ReturnHome onClick={update} />
-            <Session {...state} update={update} /></div>:
-        <MainPage create={create} join={join} playerId={playerId} />
+            <header className={styles.header}>
+                <Clipboard value={sessionId} />
+                <button onClick={() => update({ 'isActive': false })} className={styles.ctrl}>Home</button>
+                <button onClick={() => update({ 'temporaryBonus': 0 })} className={styles.ctrl}>Next turn</button>
+            </header>
+            <Session {...state} update={update} /></div> :
+            <MainPage create={create} join={join} playerId={playerId} />
     )
 }
 
