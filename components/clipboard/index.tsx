@@ -3,7 +3,7 @@ import styles from './Clipboard.module.css'
 
 export function Clipboard({ value }) {
     const [isCopied, setIsCopied] = useState(false);
-    const className = [styles.button, isCopied && styles.hasAnimation].join(' ');
+    const classList = [styles.root, isCopied ? styles.hasAnimation : ''].join(' ');
 
     const onCopy = () => {
         setIsCopied(true);
@@ -11,13 +11,8 @@ export function Clipboard({ value }) {
     };
 
     return (
-        <div className={styles.root}>
-            <p>{value}</p>
-            <div
-                className={className}
-                onClick={onCopy}
-                onTransitionEnd={() => setIsCopied(false)}
-            />
+        <div className={classList} onClick={onCopy} onTransitionEnd={(() => setIsCopied(false))}> 
+            {value} 
         </div>
     )
 }
