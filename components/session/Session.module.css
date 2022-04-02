@@ -1,13 +1,18 @@
-.players {
-    display: grid;
-    grid-template-columns: auto auto auto;
+.root {
+    width: 80%;
+    margin: auto;
+    display: flex;
+    flex-wrap: wrap;
     gap: 10px;
-    margin-top: 15px;
 }
 
-.root {
-    width: 50%;
-    margin: auto;
+@media (max-width: 587px) {
+    .root {
+        margin: auto;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
 }
 
 .sessionId {

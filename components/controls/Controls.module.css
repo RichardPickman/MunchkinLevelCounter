@@ -1,12 +1,11 @@
-.level {
+.root {
     margin-top: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: space-around;
     width: 33%;
-    height: 206px;
-    font-size: 16px;
+    z-index: 3;
 }
 
 .stats {
@@ -14,6 +13,16 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+
+.value {
+    font-size: 56px;
+    margin: 0;
+}
+
+.value_title {
+    margin: 0;
+    font-size: 1em;
 }
 
 .btn {
@@ -24,6 +33,6 @@
 }
 
 .svg {
-    width: 17px;
-    height: 30px;
+    width: 2em;
+    height: 3em;
 }
