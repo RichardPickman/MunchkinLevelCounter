@@ -34,6 +34,7 @@ function Home(props) {
     const join = (sessionId) => send({
         type: 'session/join',
         sessionId,
+        playerId,
     });
 
     const update = (data: Partial<PlayerType>) => send({
@@ -78,14 +79,14 @@ function Home(props) {
     }
 
     return (
-        (sessionId) ? <div className={styles.gamers}>
+        (sessionId) ? <div className={styles.root}>
             <header className={styles.header}>
                 <Clipboard value={sessionId} />
                 <button onClick={() => update({ 'isActive': false })} className={styles.ctrl}>Home</button>
                 <button onClick={() => update({ 'temporaryBonus': 0 })} className={styles.ctrl}>Next turn</button>
             </header>
-            <Session {...state} update={update} /></div> :
-            <MainPage create={create} join={join} playerId={playerId} />
+            <Session {...state} playerId={playerId} update={update} /></div> :
+            <MainPage create={create} join={join} />
     )
 }
 

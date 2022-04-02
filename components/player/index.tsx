@@ -7,31 +7,11 @@ interface Props extends PlayerType {
     onClick: (data: Partial<PlayerType>) => void
 }
 
-export const Player = ({ onClick, playerId, isOwner, color, isActive, ...props }: Props) => {
-    const hasControls = !!onClick
-    const titles = { 'level': 'Level', 'equipment': 'Equipment', 'temporaryBonus': 'Bonus' }
-
-    return (
-        <div className={styles.playerBlock}  style={{ width: '100%', height: '100%' }}>
-            <div className={styles.player}>
-                <p> Total power: <strong>{sum(props)}</strong></p>
-                ID: <strong>{playerId}</strong>
-            </div>
-            { hasControls &&
-            <div className={styles.stats}>
-                {Object.entries(props).map(([key, value], index) => <Controls name={key} value={value} onClick={onClick} key={index} />)}
-            </div>}
-            { !hasControls &&
-            <div className={styles.otherStat}>
-                {Object.entries(props).map(([key, value], index) => (
-                    <div className={styles.opponentCard} key={index}>
-                        <p style={{ margin: '0px' }}>{titles[`${key}`]}</p>
-                        <p>{value}</p>
-                    </div>
-                ))}
-            </div>}
-            { hasControls && <div className={styles.controls}>
-            </div>}
+export const Player = ({ onClick, playerId, isOwner, color, isActive, ...props }: Props) => (
+    <div className={styles.card} style={{ background: color }}>
+        <strong className={styles.total_power}>{sum(props)}</strong>
+        <div className={styles.stats}>
+            {Object.entries(props).map(([key, value], index) => <Controls name={key} value={value} onClick={onClick} key={index} />)}
         </div>
-    );
-};
+    </div>
+);

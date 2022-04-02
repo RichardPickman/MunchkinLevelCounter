@@ -2,7 +2,7 @@ import { useRef } from 'react';
 import styles from './Mainpage.module.css'
 
 
-export const MainPage = ({ create, join, playerId }: {[k:string]: any}) => {
+export const MainPage = ({ create, join }: {[k:string]: any}) => {
     const inputRef = useRef<HTMLInputElement>();
 
     return (
