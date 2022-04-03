@@ -9,7 +9,9 @@ interface dbConfig {
     username: string,
     password: string,
     hostname: string,
-    database: string
+    database: string,
+    local_db: string,
+    local_db_port: string,
 }
 
 config();
@@ -19,6 +21,8 @@ const getDbConfig = (): dbConfig => ({
     password: process.env.DB_PASSWORD,
     hostname: process.env.DB_HOST,
     database: process.env.DB_NAME,
+    local_db: process.env.DB_LOCAL_HOSTNAME,
+    local_db_port: process.env.DB_LOCAL_PORT,
 });
 
 const getServerConfig = (): ServerConfig => ({

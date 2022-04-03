@@ -1,6 +1,6 @@
 import * as mongodb from 'mongodb';
 
-export const getUri = ({ username, password, hostname, database }) =>  `mongodb+srv://${username}:${password}@${hostname}/${database}?retryWrites=true&w=majority`;
+export const getUri = ({ local_db, local_db_port }) =>  `mongodb://${local_db}:${local_db_port}`;
 
 export const createConnection = (config) => {
     const uri = getUri(config)

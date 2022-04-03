@@ -10,7 +10,7 @@ export function Clipboard({ value }) {
     };
 
     return (
-        <div className={classList} onClick={onCopy} onTransitionEnd={(() => setIsCopied(false))}>
+        <div className={classList} onClick={onCopy} onAnimationEnd={(() => setIsCopied(false))}>
             {value}
         </div>
     )

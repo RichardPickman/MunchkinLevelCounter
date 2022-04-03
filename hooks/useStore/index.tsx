@@ -1,4 +1,5 @@
 import { useReducer } from "react";
+import { useWebSocket } from "../useWebSocket";
 
 
 function getPlayerById(players, id) {
@@ -39,5 +40,22 @@ function reducer(state, action) {
 }
 
 export function useStore() {
-    return useReducer(reducer, getInititalState())
+    const [state, dispatch] = useReducer(reducer, getInititalState())
+    const ws = useWebSocket('ws://localhost:8080', message => dispatch(message))
+
+    const dispatchRemoteAction = (action) => {
+        ws.send(action)
+
+        if (action === 'session/create' || action === 'session/join') {
+            return
+        } else {
+            dispatch(action)
+        }
+    }
+
+
+    return {
+        state,
+        dispatchRemoteAction
+    }
 }

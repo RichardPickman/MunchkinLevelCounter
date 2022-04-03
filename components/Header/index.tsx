@@ -1,4 +1,4 @@
-import styles from './index.module.css'
+import styles from './Header.module.css'
 
 export const Header = ({ children }) => {
     return (

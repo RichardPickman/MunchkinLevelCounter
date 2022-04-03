@@ -1,7 +1,8 @@
 .root {
     display: flex;
+    flex-grow: 1;
+    display: flex;
     flex-flow: column nowrap;
-    height: 100vh;
 }
 
 .sessionId {

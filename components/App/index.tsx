@@ -1,6 +1,5 @@
 import { useRouter } from 'next/router';
 import { useEffect, useRef, useState } from 'react';
-
 import { ERRORS } from '../../constants';
 import { useStore } from '../../hooks/useStore';
 import { Header } from '../Header';
@@ -8,9 +7,9 @@ import { MainPage } from '../Mainpage';
 import { Error } from '../Error';
 import { Clipboard } from '../Clipboard';
 import { Session } from '../Session';
-import * as Types from '../../types';
-import styles from './index.module.css';
 
+import * as Types from '../../types';
+import styles from './App.module.css';
 
 
 export const App = (props) => {
@@ -38,12 +37,31 @@ export const App = (props) => {
         playerId,
     });
 
-    const update = (data: Partial<Types.Player>) => send({
-        type: 'session/update',
-        playerId,
-        sessionId,
-        ...data,
-    });
+    const update = (data: Partial<Types.Player>) => {
+        dispatch({
+            type: 'session/update',
+            payload: {
+                ...state,
+                players: state.players.map(player => {
+                    if (player.playerId === playerId) {
+                        return {
+                            ...player,
+                            ...data,
+                        }
+                    }
+
+                    return player;
+                }),
+            }
+        });
+        
+        send({
+            type: 'session/update',
+            playerId,
+            sessionId,
+            ...data,
+        })
+    }
 
     useEffect(() => {
         if (ws.current) {
@@ -51,7 +69,7 @@ export const App = (props) => {
             return;
         }
 
-        ws.current = new WebSocket(`ws://${props.host}`)
+        ws.current = new WebSocket(`wss://${props.host}`)
 
         ws.current.onmessage = (message) => {
             const action = JSON.parse(message.data);
@@ -60,15 +78,15 @@ export const App = (props) => {
 
             console.log('action received:', action);
         }
-
+        
         ws.current.onopen = () => setConnected(true);
-
+        
         ws.current.onclose = () => update({ isActive: false });
-
+        
         return () => ws?.current.close();
-
+        
     }, []);
-
+    
     useEffect(() => {
         const url = sessionId ? `/#${sessionId}` : '/'
 

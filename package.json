@@ -2,6 +2,7 @@
   "name": "munchkinlevelcounter",
   "private": true,
   "scripts": {
+    "share": "lt --port 8080 --subdomain munchkin-level-counter",
     "ui:lint": "next lint",
     "server:start": "node server/index.ts",
     "dev": "nodemon server/index.ts",
@@ -10,6 +11,7 @@
   "dependencies": {
     "@types/prompt": "^1.1.2",
     "dotenv": "^16.0.0",
+    "localtunnel": "^2.0.2",
     "mongodb": "^4.3.0",
     "next": "^12.1.0",
     "nodemon": "^2.0.15",
