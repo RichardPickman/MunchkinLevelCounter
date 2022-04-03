@@ -1,18 +1,7 @@
 .root {
-    width: 80%;
-    margin: auto;
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-@media (max-width: 587px) {
-    .root {
-        margin: auto;
-        display: flex;
-        flex-wrap: wrap;
-        gap: 10px;
-    }
+    flex-flow: column nowrap;
+    height: 100vh;
 }
 
 .sessionId {
@@ -21,3 +10,5 @@
     justify-content: center;
     margin-top: 15px;
 }
+
+

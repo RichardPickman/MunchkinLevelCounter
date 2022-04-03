@@ -1,4 +1,4 @@
-import { Player } from '../player'
+import { Player } from '../Player'
 import * as Types from '../../types'
 
 import styles from './Session.module.css';
@@ -10,7 +10,7 @@ interface Props extends Types.Session {
 
 export const Session = ({ playerId, players, update }: Props) => {
     return (
-        <main className={styles.root}>
+        <div className={styles.root}>
             {players.map(player => player.isActive && (
                 <Player
                     {...player}
@@ -18,6 +18,6 @@ export const Session = ({ playerId, players, update }: Props) => {
                     key={player.playerId}
                 />
             ))}
-        </main>
+        </div>
     )
 }

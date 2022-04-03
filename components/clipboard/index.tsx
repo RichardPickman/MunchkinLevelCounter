@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import styles from './Clipboard.module.css'
 
 export function Clipboard({ value }) {

@@ -1,11 +1,9 @@
 .root {
-    margin-top: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-around;
-    width: 33%;
-    z-index: 3;
+    justify-content: space-between;
+    position: relative;
 }
 
 .stats {
@@ -16,20 +14,19 @@
 }
 
 .value {
-    font-size: 56px;
+    font-size: 4em;
     margin: 0;
 }
 
 .value_title {
-    margin: 0;
     font-size: 1em;
 }
 
 .btn {
-    width: 50px;
-    height: 50px;
+    padding: 16px 24px;
     background: none;
     border: none;
+    cursor: pointer;
 }
 
 .svg {
