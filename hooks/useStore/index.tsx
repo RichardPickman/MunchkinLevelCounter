@@ -1,10 +1,8 @@
-import { useReducer } from "react";
+import { Dispatch, useReducer } from "react";
 import { useWebSocket } from "../useWebSocket";
+import * as Types from '../../types'
+import { reducer } from "./reducer";
 
-
-function getPlayerById(players, id) {
-    return players.find(player => player.playerId === id)
-}
 
 function getInititalState() {
     return {
@@ -15,47 +13,25 @@ function getInititalState() {
     }
 }
 
-function reducer(state, action) {
-    const { type, payload: newSession } = action;
-    const { playerId, isActive } = getPlayerById(newSession.players, state.playerId) || newSession.players[newSession.players.length - 1];
-
-    switch (type) {
-        case 'session/create':
-        case 'session/join':
-            return {
-                ...state,
-                ...newSession,
-                playerId,
-            }
-        case 'session/update': {
-            return {
-                ...state,
-                players: isActive ? newSession.players : [],
-                sessionId: isActive ? newSession.sessionId : null
-            }
-        }
-    }
-
-    return state;
-}
-
-export function useStore() {
+export const useStore = (url?: string): [
+        state: {
+            sessionId: Types.SessionId,
+            playerId: Types.PlayerId,
+            players: Types.Player[],
+        },
+        dispatch: Dispatch<any>,
+    ] => {
     const [state, dispatch] = useReducer(reducer, getInititalState())
-    const ws = useWebSocket('ws://localhost:8080', message => dispatch(message))
+    const ws = useWebSocket(url, message => dispatch(message))
 
     const dispatchRemoteAction = (action) => {
         ws.send(action)
-
-        if (action === 'session/create' || action === 'session/join') {
-            return
-        } else {
-            dispatch(action)
-        }
+        dispatch(action)
     }
 
 
-    return {
+    return [
         state,
-        dispatchRemoteAction
-    }
+        dispatchRemoteAction,
+    ]
 }

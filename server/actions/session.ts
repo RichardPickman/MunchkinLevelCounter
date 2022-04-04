@@ -2,7 +2,7 @@ import { getPlayerId, getSessionId, createPlayer } from "../../helpers";
 import { insertSession, getSession, insertPlayer, updateSessionState } from "../resolvers/index";
 
 
-export const createSession = async ({ playerId }, db) => {
+export const createSession = async ({ playerId = null } = {}, db) => {
     const player =  createPlayer(playerId, true)
     const sessionId = getSessionId()
     const session = {
