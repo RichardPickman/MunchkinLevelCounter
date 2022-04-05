@@ -9,7 +9,7 @@ interface dbConfig {
     username: string,
     password: string,
     hostname: string,
-    database: string
+    database: string,
 }
 
 config();

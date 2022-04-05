@@ -1,3 +1,4 @@
+import { WebSocket } from 'ws';
 
 export const broadcast = (websockets: WebSocket[], data: any) => {
     let result = JSON.stringify(data);

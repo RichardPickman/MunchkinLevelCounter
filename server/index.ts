@@ -77,6 +77,7 @@ app.prepare().then(async () => {
             };
 
             const session = await handleAction(action, db);
+            const websockets = getWebSocketsBySession(wsCache, session).filter(websocket => websocket !== ws);
 
             if (action.type === 'session/create' || action.type === 'session/join') {
                 const player = session.players[session.players.length - 1];
@@ -84,9 +85,8 @@ app.prepare().then(async () => {
                 wsCache.set(player.playerId, ws);
             }
 
-            const websockets = getWebSocketsBySession(wsCache, session);
-
-            broadcast(websockets, { type: action.type, payload: session });
+            broadcast([ws], { type: action.type, payload: session });
+            broadcast(websockets, { type: 'session/update', payload: session });
 
         });
     });

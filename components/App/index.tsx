@@ -1,83 +1,24 @@
-import { useRouter } from 'next/router';
-import { useEffect, useRef, useState } from 'react';
-
-import { ERRORS } from '../../constants';
-import { useStore } from '../../hooks/useStore';
+import { useAppStore } from '../../hooks/useAppStore';
+import { useWebSocket } from '../../hooks/useWebSocket';
 import { Header } from '../Header';
 import { MainPage } from '../Mainpage';
-import { Error } from '../Error';
 import { Clipboard } from '../Clipboard';
 import { Session } from '../Session';
+
 import * as Types from '../../types';
-import styles from './index.module.css';
+import styles from './App.module.css';
 
 
+export const App = () => {
+    const [{ sessionId, playerId, players }, dispatch] = useAppStore()
+    const ws = useWebSocket(message => dispatch(message))
 
-export const App = (props) => {
-    const ws = useRef<WebSocket | null>(null);
-    const router = useRouter();
-    const [connected, setConnected] = useState(false);
-    const [state, dispatch] = useStore()
+    const dispatchRemoteAction = (type, payload) => ws.send({ type, payload })
 
-    const { sessionId, playerId } = state;
-
-    const send = ({ type, ...payload }) => {
-        const message = JSON.stringify({ type, payload });
-
-        if (ws.current) ws.current.send(message);
-    };
-
-    const create = () => send({
-        type: 'session/create',
-        playerId,
-    });
-
-    const join = (sessionId) => send({
-        type: 'session/join',
-        sessionId,
-        playerId,
-    });
-
-    const update = (data: Partial<Types.Player>) => send({
-        type: 'session/update',
-        playerId,
-        sessionId,
-        ...data,
-    });
-
-    useEffect(() => {
-        if (ws.current) {
-            console.log('websocket is already initialized');
-            return;
-        }
-
-        ws.current = new WebSocket(`ws://${props.host}`)
-
-        ws.current.onmessage = (message) => {
-            const action = JSON.parse(message.data);
-
-            dispatch(action)
-
-            console.log('action received:', action);
-        }
-
-        ws.current.onopen = () => setConnected(true);
-
-        ws.current.onclose = () => update({ isActive: false });
-
-        return () => ws?.current.close();
-
-    }, []);
-
-    useEffect(() => {
-        const url = sessionId ? `/#${sessionId}` : '/'
-
-        router.push(url, undefined, { shallow: true });
-    }, [sessionId])
-
-    if (!connected) {
-        return <Error cause={ERRORS.WS} />
-    }
+    const create = () => dispatchRemoteAction('session/create', { playerId });
+    const join = (sessionId: Types.SessionId) => dispatchRemoteAction('session/join', { sessionId, playerId });
+    const update = (payload: Partial<Types.Player>) => dispatchRemoteAction('session/update', { sessionId, playerId, ...payload });
+    const exit = () => dispatchRemoteAction('session/exit', { sessionId, playerId });
 
     if (!sessionId) {
         return <MainPage create={create} join={join} />
@@ -87,10 +28,10 @@ export const App = (props) => {
         <div className={styles.root}>
             <Header>
                 <Clipboard value={sessionId} />
-                <button onClick={() => update({ isActive: false })}>Home</button>
+                <button onClick={exit}>Exit</button>
                 <button onClick={() => update({ temporaryBonus: 0 })}>Next turn</button>
             </Header>
-            <Session {...state} playerId={playerId} update={update} />
+            <Session players={players} playerId={playerId} onUpdate={update} />
         </div>
     )
 }

@@ -2,8 +2,8 @@ import { getPlayerId, getSessionId, createPlayer } from "../../helpers";
 import { insertSession, getSession, insertPlayer, updateSessionState } from "../resolvers/index";
 
 
-export const createSession = async ({ playerId }, db) => {
-    const player =  createPlayer(playerId, true)
+export const createSession = async ({ playerId = null } = {}, db) => {
+    const player = createPlayer(playerId, true)
     const sessionId = getSessionId()
     const session = {
         sessionId,
@@ -38,3 +38,5 @@ export const joinSession = async ({ sessionId, playerId }, db) => {
 }
 
 export const updateSession = ({ sessionId, playerId, ...changes }, db) => updateSessionState({ sessionId, playerId, ...changes }, db)
+
+export const exitSession = ({ sessionId, playerId }, db) => updateSessionState({ sessionId, playerId, isActive: false }, db)
