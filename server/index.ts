@@ -75,7 +75,7 @@ app.prepare().then(async () => {
                 console.log("Wrong action: ", arrayBuffer.toString());
                 return;
             };
-            
+
             const session = await handleAction(action, db);
             const websockets = getWebSocketsBySession(wsCache, session).filter(websocket => websocket !== ws);
 
@@ -84,7 +84,6 @@ app.prepare().then(async () => {
 
                 wsCache.set(player.playerId, ws);
             }
-            
 
             broadcast([ws], { type: action.type, payload: session });
             broadcast(websockets, { type: 'session/update', payload: session });
