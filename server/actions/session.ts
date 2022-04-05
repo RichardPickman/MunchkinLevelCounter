@@ -3,7 +3,7 @@ import { insertSession, getSession, insertPlayer, updateSessionState } from "../
 
 
 export const createSession = async ({ playerId = null } = {}, db) => {
-    const player =  createPlayer(playerId, true)
+    const player = createPlayer(playerId, true)
     const sessionId = getSessionId()
     const session = {
         sessionId,
@@ -38,3 +38,5 @@ export const joinSession = async ({ sessionId, playerId }, db) => {
 }
 
 export const updateSession = ({ sessionId, playerId, ...changes }, db) => updateSessionState({ sessionId, playerId, ...changes }, db)
+
+export const exitSession = ({ sessionId, playerId }, db) => updateSessionState({ sessionId, playerId, isActive: false }, db)

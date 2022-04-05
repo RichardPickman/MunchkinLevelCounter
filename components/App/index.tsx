@@ -1,4 +1,5 @@
-import { useStore } from '../../hooks/useStore';
+import { useAppStore } from '../../hooks/useAppStore';
+import { useWebSocket } from '../../hooks/useWebSocket';
 import { Header } from '../Header';
 import { MainPage } from '../Mainpage';
 import { Clipboard } from '../Clipboard';
@@ -9,34 +10,15 @@ import styles from './App.module.css';
 
 
 export const App = () => {
-    const [state, dispatch] = useStore()
-    const { sessionId, playerId, players } = state;
+    const [{ sessionId, playerId, players }, dispatch] = useAppStore()
+    const ws = useWebSocket(message => dispatch(message))
 
-    const create = () => dispatch({
-        type: 'session/create',
-        payload: {
-            playerId,
-        }
-    });
+    const dispatchRemoteAction = (type, payload) => ws.send({ type, payload })
 
-    const join = (sessionId) => dispatch({
-        type: 'session/join',
-        payload: {
-            sessionId,
-            playerId,
-        }
-    });
-
-    const update = (payload: Partial<Types.Player>) => {
-        dispatch({
-            type: 'session/update',
-            payload: {
-                sessionId,
-                playerId,
-                ...payload
-            }
-        });
-    }
+    const create = () => dispatchRemoteAction('session/create', { playerId });
+    const join = (sessionId: Types.SessionId) => dispatchRemoteAction('session/join', { sessionId, playerId });
+    const update = (payload: Partial<Types.Player>) => dispatchRemoteAction('session/update', { sessionId, playerId, ...payload });
+    const exit = () => dispatchRemoteAction('session/exit', { sessionId, playerId });
 
     if (!sessionId) {
         return <MainPage create={create} join={join} />
@@ -46,7 +28,7 @@ export const App = () => {
         <div className={styles.root}>
             <Header>
                 <Clipboard value={sessionId} />
-                <button onClick={() => update({ isActive: false })}>Home</button>
+                <button onClick={exit}>Exit</button>
                 <button onClick={() => update({ temporaryBonus: 0 })}>Next turn</button>
             </Header>
             <Session players={players} playerId={playerId} onUpdate={update} />

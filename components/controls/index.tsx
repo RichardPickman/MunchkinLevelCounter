@@ -10,11 +10,13 @@ function debounce(func, timeout = 500) {
 }
 
 export const Controls = ({ name, value, onClick }) => {
-    const hasControls = !!onClick;
-    const titles = { 'level': 'Level', 'equipment': 'Equipment', 'temporaryBonus': 'Bonus' };
     const [clicks, setClicks] = useState(0);
+    const titles = { 'level': 'Level', 'equipment': 'Equipment', 'temporaryBonus': 'Bonus' };
+    const hasControls = !!onClick;
+
     const hasLevelDown = (name === 'level' && value === 1);
     const hasLevelUp = (name === 'level' && value === 10);
+
     const debouncedOnClick = useCallback(debounce(onClick, 250), [value]);
 
     const onUp = () => {

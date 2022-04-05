@@ -1,13 +1,12 @@
-import { stringify } from "querystring";
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useState } from 'react'
 
-const getWebSocketHost = () => {
-    const protocol = globalThis.location?.protocol === 'http:' ? 'ws' : 'wss'
 
-    return protocol + '://' + globalThis.location?.host
-};
+const getWebsocketProtocol = () => globalThis.location?.protocol === 'http:' ? 'ws' : 'wss'
 
-export const useWebSocket = (url = getWebSocketHost(), onMessage) => {
+const getWebSocketHost = () => getWebsocketProtocol() + '://' + globalThis.location?.host
+
+
+export const useWebSocket = (onMessage, url = getWebSocketHost()) => {
     const ws = useRef<WebSocket | null>(null);
     const [isConnected, setConnected] = useState(false);
 
@@ -15,7 +14,7 @@ export const useWebSocket = (url = getWebSocketHost(), onMessage) => {
         return ws.current.send(JSON.stringify(data));
     };
 
-    useEffect(() => {        
+    useEffect(() => {
         if (ws.current) {
             console.log('websocket is already initialized');
             return;
@@ -30,7 +29,6 @@ export const useWebSocket = (url = getWebSocketHost(), onMessage) => {
         ws.current.onclose = () => setConnected(false);
         
         return () => ws?.current.close();
-        
     }, []);
 
     return {
