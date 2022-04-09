@@ -1,6 +1,4 @@
 import { WebSocket } from 'ws';
-import { handleAction } from '../actions';
-import { getSessionByPlayerId } from '../resolvers';
 
 export const broadcast = (websockets: WebSocket[], data: any) => {
     let result = JSON.stringify(data);

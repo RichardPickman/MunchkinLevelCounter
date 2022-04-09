@@ -29,7 +29,7 @@ export const onClose = <K, V>(wsCache: Map<K, V>, db, ws): void => {
                     isActive: false,
                 }
             }, db);
-            
+
             const websockets = getWebSocketsBySession(wsCache, payload);
 
             if (websockets) {

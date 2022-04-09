@@ -1,8 +1,6 @@
 import { Player } from '../Player'
 import * as Types from '../../types'
-
 import styles from './Session.module.css';
-
 
 interface Props {
     playerId: Types.PlayerId,

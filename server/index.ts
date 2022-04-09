@@ -26,7 +26,6 @@ app.prepare().then(async () => {
 
     wss.on('connection', ws => {
         ws.on('close', () => onClose(wsCache, db, ws))
-
         ws.on('message', arrayBuffer => onMessage(arrayBuffer, wsCache, ws, db));
     });
 
