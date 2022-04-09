@@ -45,9 +45,14 @@ export const updateSessionState = async ({sessionId, playerId, ...changes}, db) 
     return result.value
 };
 
-export const getSessionByPlayerId = async ({ playerId }, db) => {
+export const getSessionByPlayerId = async (playerId, db) => {
     const result = await db.collection('sessions').findOne({
-        players: { $elemMatch: { playerId, isActive: true } }
+        players: { 
+            $elemMatch: { 
+                playerId, 
+                isActive: true 
+            } 
+        }
     });
 
     return result
