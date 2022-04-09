@@ -29,7 +29,7 @@ export const arrayBufferToJSON = (arrayBuffer) => {
 
         return data;
     } catch (error) {
-        return null;
+        console.log("Wrong action: ", arrayBuffer.toString());
     };
 };
 
