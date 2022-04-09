@@ -1,12 +1,7 @@
-
-import { arrayBufferToJSON } from '../helpers';
-import { handleAction } from './actions/index';
 import { getConfig } from './config/index';
-import { getSessionByPlayerId } from './resolvers/index';
 import { createConnection } from './db/index';
 import { WebSocketServer } from 'ws';
-import { getWebSocketsBySession, broadcast } from './ws/helpers';
-
+import { onClose, onMessage } from './ws'
 import { createServer } from 'http'
 import { parse } from 'url'
 import next from 'next';
@@ -30,68 +25,12 @@ app.prepare().then(async () => {
     const db = client.db();
 
     wss.on('connection', ws => {
-        ws.on('close', () => {
-            const cacheItems = Array.from(wsCache.entries());
-            const cachedSocket = cacheItems.find(([, value]) => value === ws);
-            const [playerId] = cachedSocket || [];
+        ws.on('close', () => onClose(wsCache, db, ws))
 
-            if (!playerId) return console.log('socket was not cached');
-
-            wsCache.delete(playerId);
-
-            // Delete if player hasn't connected to game with same id
-            setTimeout(async function () {
-                if (!wsCache.has(playerId)) {
-                    const session = await getSessionByPlayerId({ playerId }, db);
-                    const payload = await handleAction({
-                        type: 'session/update',
-                        payload: {
-                            playerId,
-                            sessionId: session.sessionId,
-                            isActive: false
-                        }
-                    }, db);
-
-                    const websockets = getWebSocketsBySession(wsCache, payload);
-
-                    if (websockets) {
-                        broadcast(websockets, {
-                            type: 'session/update',
-                            payload,
-                        })
-                    }
-
-                }
-            }, 1000 * 5)
-
-            console.log(playerId, 'removed from cache due to closed connection');
-
-        });
-
-        ws.on('message', async arrayBuffer => {
-            const action = arrayBufferToJSON(arrayBuffer);
-
-            if (!action) {
-                console.log("Wrong action: ", arrayBuffer.toString());
-                return;
-            };
-
-            const session = await handleAction(action, db);
-            const websockets = getWebSocketsBySession(wsCache, session).filter(websocket => websocket !== ws);
-
-            if (action.type === 'session/create' || action.type === 'session/join') {
-                const player = session.players[session.players.length - 1];
-
-                wsCache.set(player.playerId, ws);
-            }
-
-            broadcast([ws], { type: action.type, payload: session });
-            broadcast(websockets, { type: 'session/update', payload: session });
-
-        });
+        ws.on('message', arrayBuffer => onMessage(arrayBuffer, wsCache, ws, db));
     });
 
-    server.on('upgrade', function (req, socket, head) {
+    server.on('upgrade', (req, socket, head) => {
         const { pathname } = parse(req.url, true);
         if (pathname !== '/_next/webpack-hmr') {
             wss.handleUpgrade(req, socket, head, function done(ws) {
@@ -100,11 +39,5 @@ app.prepare().then(async () => {
         }
     });
 
-    server.listen(config.ws.port, () => {
-        console.log(`Ready!`)
-    })
-})
-
-
-
-
+    server.listen(config.ws.port, () => console.log(`Ready!`))
+});
