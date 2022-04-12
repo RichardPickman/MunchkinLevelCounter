@@ -15,8 +15,6 @@ const app = next({
 })
 const handle = app.getRequestHandler()
 
-const wsCache = new Map();
-
 app.prepare().then(async () => {
     const server = createServer((req, res) => handle(req, res, parse(req.url, true)));
     const wss = new WebSocketServer({ noServer: true });
@@ -25,8 +23,8 @@ app.prepare().then(async () => {
     const db = client.db();
 
     wss.on('connection', ws => {
-        ws.on('close', () => onClose(wsCache, db, ws))
-        ws.on('message', arrayBuffer => onMessage(arrayBuffer, wsCache, ws, db));
+        ws.on('close', () => onClose(db, ws))
+        ws.on('message', arrayBuffer => onMessage(arrayBuffer, ws, db));
     });
 
     server.on('upgrade', (req, socket, head) => {
