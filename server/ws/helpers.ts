@@ -24,4 +24,3 @@ export const cacheIt = (action, session, cache, ws) => {
         cache.set(player.playerId, ws);
     }
 }
-
