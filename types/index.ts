@@ -2,9 +2,6 @@ export type PlayerId = string;
 
 export type SessionId = string;
 
-export type Nickname = string;
-
-
 export interface Player {
     playerId: PlayerId,
     isOwner: boolean,
