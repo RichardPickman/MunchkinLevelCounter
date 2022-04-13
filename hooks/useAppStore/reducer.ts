@@ -17,10 +17,22 @@ export const reducePlayerId = (playerId, action) => {
 
     switch (type) {
         case 'session/create':
-        case 'session/join': 
+        case 'session/join':
             return payload.players[payload.players.length - 1].playerId;
         default:
             return playerId;
+    }
+}
+
+export const reduceNickname = (nickname, action) => {
+    const { type, payload } = action;
+
+    switch (type) {
+        case 'session/create':
+        case 'session/join':
+            return payload.nickname;
+        default:
+            return nickname;
     }
 }
 
@@ -29,8 +41,8 @@ export const reducePlayers = (players, action) => {
 
     switch (type) {
         case 'session/create':
-        case 'session/join': 
-        case 'session/update': 
+        case 'session/join':
+        case 'session/update':
             return [...payload.players]
         case 'session/exit':
             return []
@@ -40,7 +52,8 @@ export const reducePlayers = (players, action) => {
 };
 
 export const reducer = (state, action) => ({
-        playerId: reducePlayerId(state.playerId, action),
-        sessionId: reduceSessionId(state.sessionId, action),
-        players: reducePlayers(state.players, action)
+    playerId: reducePlayerId(state.playerId, action),
+    sessionId: reduceSessionId(state.sessionId, action),
+    nickname: reduceNickname(state.nickname, action),
+    players: reducePlayers(state.players, action)
 });

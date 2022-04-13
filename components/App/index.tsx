@@ -15,8 +15,8 @@ export const App = () => {
 
     const dispatchRemoteAction = (type, payload) => ws.send({ type, payload })
 
-    const create = () => dispatchRemoteAction('session/create', { playerId });
-    const join = (sessionId: Types.SessionId) => dispatchRemoteAction('session/join', { sessionId, playerId });
+    const create = (nickname: Types.Nickname) => dispatchRemoteAction('session/create', { playerId, nickname });
+    const join = (sessionId: Types.SessionId, nickname: Types.Nickname) => dispatchRemoteAction('session/join', { sessionId, playerId, nickname });
     const update = (payload: Partial<Types.Player>) => dispatchRemoteAction('session/update', { sessionId, playerId, ...payload });
     const exit = () => dispatchRemoteAction('session/exit', { sessionId, playerId });
 
