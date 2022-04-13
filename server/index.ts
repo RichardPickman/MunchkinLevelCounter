@@ -1,7 +1,6 @@
 import { getConfig } from './config/index';
 import { createConnection } from './db/index';
-import { WebSocketServer } from 'ws';
-import { onClose, onMessage } from './ws'
+import { createWebSocketServer, onClose, onMessage } from './ws'
 import { createServer } from 'http'
 import { parse } from 'url'
 import next from 'next';
@@ -17,15 +16,13 @@ const handle = app.getRequestHandler()
 
 app.prepare().then(async () => {
     const server = createServer((req, res) => handle(req, res, parse(req.url, true)));
-    const wss = new WebSocketServer({ noServer: true });
-
     const client = await createConnection(config.db);
     const db = client.db();
 
-    wss.on('connection', ws => {
-        ws.on('close', () => onClose(db, ws))
-        ws.on('message', arrayBuffer => onMessage(arrayBuffer, ws, db));
-    });
+    const wss = createWebSocketServer(
+        ({ message, ws }) => onMessage({ message, ws, db }),
+        ({ ws }) => onClose({ db, ws }),
+    );
 
     server.on('upgrade', (req, socket, head) => {
         const { pathname } = parse(req.url, true);
