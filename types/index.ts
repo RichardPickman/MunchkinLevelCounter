@@ -2,15 +2,18 @@ export type PlayerId = string;
 
 export type SessionId = string;
 
+export type Nickname = string;
+
 
 export interface Player {
-    playerId: PlayerId, 
-    isOwner: boolean, 
-    color: string, 
-    isActive: boolean, 
-    level: number, 
-    equipment: number, 
-    temporaryBonus: number, 
+    playerId: PlayerId,
+    isOwner: boolean,
+    nickname: string,
+    color: string,
+    isActive: boolean,
+    level: number,
+    equipment: number,
+    temporaryBonus: number,
 }
 
 export interface Session {

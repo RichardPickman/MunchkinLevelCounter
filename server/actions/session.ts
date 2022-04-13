@@ -2,8 +2,8 @@ import { getPlayerId, getSessionId, createPlayer } from "../../helpers";
 import { insertSession, getSession, insertPlayer, updateSessionState } from "../resolvers/index";
 
 
-export const createSession = async ({ playerId = null } = {}, db) => {
-    const player = createPlayer(playerId, true)
+export const createSession = async ({ playerId = null, nickname = '' } = {}, db) => {
+    const player = createPlayer(playerId, nickname, true)
     const sessionId = getSessionId()
     const session = {
         sessionId,
@@ -16,8 +16,8 @@ export const createSession = async ({ playerId = null } = {}, db) => {
     return session
 }
 
-export const joinSession = async ({ sessionId, playerId }, db) => {
-    const player = createPlayer(playerId || getPlayerId())
+export const joinSession = async ({ sessionId, playerId, nickname }, db) => {
+    const player = createPlayer(playerId || getPlayerId(), nickname)
 
     const session = await getSession({
         sessionId,
