@@ -8,14 +8,14 @@ export const MainPage = ({ create, join }: { [k: string]: any }) => {
     const nicknameRef = useRef<HTMLInputElement>();
 
     const handleAction = (type) => {
-        if (nicknameRef.current.value.length > 0) useLocalStorage('set', "nickname", nicknameRef.current.value);
+        if (nicknameRef.current.value !== '') useLocalStorage.setItem('nickname', nicknameRef.current.value)
 
         switch (type) {
             case 'create':
-                create(nicknameRef.current.value);
+                create(useLocalStorage.getItem('nickname'));
                 break;
             case 'join':
-                join(sessionIdRef.current.value, nicknameRef.current.value);
+                join(sessionIdRef.current.value, useLocalStorage.getItem('nickname'));
                 break;
         }
     }
