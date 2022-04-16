@@ -31,6 +31,8 @@ export const arrayBufferToJSON = (arrayBuffer) => {
         return data;
     } catch (error) {
         console.log("Wrong action: ", arrayBuffer.toString());
+        
+        return null;
     };
 };
 

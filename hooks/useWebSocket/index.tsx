@@ -1,12 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 
-const getWebsocketProtocol = () => globalThis.location?.protocol === 'http:' ? 'ws' : 'wss'
-
-const getWebSocketHost = () => getWebsocketProtocol() + '://' + process.env.NEXT_PUBLIC_WS
-
-
-export const useWebSocket = (onMessage, url = getWebSocketHost()) => {
+export const useWebSocket = (url,onMessage) => {
     const ws = useRef<WebSocket | null>(null);
     const [isConnected, setConnected] = useState(false);
 

@@ -11,7 +11,7 @@ import styles from './App.module.css';
 
 export const App = () => {
     const [{ sessionId, playerId, players, nickname }, dispatch] = useAppStore();
-    const ws = useWebSocket(message => dispatch(message));
+    const ws = useWebSocket(process.env.NEXT_PUBLIC_WS, message => dispatch(message));
 
     const dispatchRemoteAction = (type, payload) => ws.send({ type, payload });
 
