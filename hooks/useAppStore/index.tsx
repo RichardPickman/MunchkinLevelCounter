@@ -5,8 +5,9 @@ import * as Types from '../../types'
 interface State {
     sessionId: Types.SessionId,
     playerId: Types.PlayerId,
-    nickname: Types.Nickname
+    nickname: Types.Nickname,
     players: Types.Player[],
+    // error: any,
 }
 
 

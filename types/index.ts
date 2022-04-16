@@ -2,10 +2,12 @@ export type PlayerId = string;
 
 export type SessionId = string;
 
+export type Nickname = string;
+
 export interface Player {
     playerId: PlayerId,
     isOwner: boolean,
-    nickname: string,
+    nickname: Nickname,
     color: string,
     isActive: boolean,
     level: number,
