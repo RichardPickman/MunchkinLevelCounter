@@ -2,11 +2,16 @@
   "name": "munchkinlevelcounter",
   "private": true,
   "scripts": {
-    "share": "lt --port 8080 --subdomain munchkin-level-counter",
-    "ui:lint": "next lint",
-    "server:start": "node server/index.ts",
-    "dev": "nodemon server/index.ts",
-    "bots": "ts-node --project tsconfig.json scripts/bots/index.ts"
+    "utils:bots": "tsnode --project tsconfig.json scripts/bots/index.ts",
+    "utils:tunnel": "lt --port 8080 --subdomain munchkin-level-counter",
+    "utils:lint": "next lint",
+    "api:watch": "nodemon server/index.ts",
+    "api:build": "tsc --project tsconfig.json server/index.ts",
+    "api:run": "node dist/index.js",
+    "ui:build": "next build",
+    "ui:watch": "next dev",
+    "ui:run": "next start",
+    "dev": "yarn ui:watch & yarn api:watch"
   },
   "dependencies": {
     "@types/prompt": "^1.1.2",
@@ -18,6 +23,7 @@
     "prompt": "^1.2.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "rp-fp-utils": "^1.0.5",
     "ts-node": "^10.7.0",
     "ws": "^8.4.2"
   },
