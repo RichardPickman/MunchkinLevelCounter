@@ -1,4 +1,4 @@
-import { getPlayerId, getSessionId, createPlayer } from "../../helpers";
+import { getPlayerId, getSessionId, createPlayer } from "../helpers";
 import { insertSession, getSession, insertPlayer, updateSessionState } from "../resolvers/index";
 
 

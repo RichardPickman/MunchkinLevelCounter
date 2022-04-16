@@ -6,9 +6,9 @@
     "utils:tunnel": "lt --port 8080 --subdomain munchkin-level-counter",
     "utils:lint": "next lint",
     "api:watch": "nodemon server/index.ts",
-    "api:build": "tsc tsconfig.json",
-    "api:run": "node dist/index.js",
-    "ui:build": "next build",
+    "api:build": "tsc --project tsconfig.json",
+    "api:run": "node dist/server/index.js",
+    "ui:build": "tsc server/index.ts --outDir dist/server/",
     "ui:watch": "next dev",
     "ui:run": "next start",
     "dev": "yarn ui:watch & yarn api:watch"

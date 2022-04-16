@@ -1,6 +1,6 @@
 import prompt from 'prompt';
 import WebSocket from 'ws';
-import { arrayBufferToJSON } from '../../helpers';
+import { arrayBufferToJSON } from '../../server/helpers';
 
 import { getServerConfig } from '../../server/config';
 

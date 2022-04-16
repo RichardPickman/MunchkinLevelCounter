@@ -53,7 +53,7 @@ export const App = () => {
             <Input onChange={setNickname} placeholder="Your name" value={nickname} />
             <Button onClick={create} text="Create" />
             <div>
-                <Input onChange={setSessionId} placeholder="Session Id" />
+                <Input onChange={setSessionId} placeholder="Session Id" value={sessionId} />
                 <Button onClick={join} text="Join" />
             </div>
         </div>

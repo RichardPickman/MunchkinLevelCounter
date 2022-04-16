@@ -1,5 +1,5 @@
 import { WebSocketServer } from "ws";
-import { arrayBufferToJSON } from "../../helpers";
+import { arrayBufferToJSON } from "../helpers";
 import { handleAction } from "../actions";
 import { getSessionByPlayerId } from "../resolvers";
 import { getWebSocketsBySession, broadcast } from "./helpers";

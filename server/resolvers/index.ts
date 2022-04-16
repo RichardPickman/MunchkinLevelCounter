@@ -1,4 +1,4 @@
-import { getUpdateFields } from '../../helpers';
+import { getUpdateFields } from '../helpers';
 import { getDb } from '../db';
 
 
