@@ -19,8 +19,7 @@ export const reducePlayerId = (playerId, action) => {
     switch (type) {
         case 'session/create':
         case 'session/join':
-            if (playerId) return playerId
-            else return payload.players[payload.players.length - 1].playerId;
+            return playerId || payload.players[payload.players.length - 1].playerId;
         default:
             return playerId;
     }
