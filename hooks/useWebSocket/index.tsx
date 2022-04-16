@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 
 const getWebsocketProtocol = () => globalThis.location?.protocol === 'http:' ? 'ws' : 'wss'
 
-const getWebSocketHost = () => getWebsocketProtocol() + '://' + globalThis.location?.host
+const getWebSocketHost = () => getWebsocketProtocol() + '://' + process.env.NEXT_PUBLIC_WS
 
 
 export const useWebSocket = (onMessage, url = getWebSocketHost()) => {
@@ -22,7 +22,7 @@ export const useWebSocket = (onMessage, url = getWebSocketHost()) => {
 
         ws.current = new WebSocket(url)
 
-        ws.current.onmessage = (message) => onMessage(JSON.parse(message.data))
+        ws.current.onmessage = (message) => onMessage(JSON.parse(message.data));
         
         ws.current.onopen = () => setConnected(true);
         

@@ -16,11 +16,3 @@ export const getWebSocketsBySession = (cache, { players }) => {
 
     return websockets;
 };
-
-export const cacheIt = (action, session, cache, ws) => {
-    if (action === 'session/create' || action === 'session/join') {
-        const player = session.players[session.players.length - 1];
-
-        cache.set(player.playerId, ws);
-    }
-}
