@@ -1,58 +1,50 @@
 import { getUpdateFields } from '../../helpers';
+import { getDb } from '../db';
 
-export const getSession = async ({ sessionId, playerId }, db) => {
-    const result = await db.collection('sessions').findOne({
-        sessionId,
-        players: { $elemMatch: { playerId } }
-    });
 
-    return result
-};
+export const getSession = ({ sessionId, playerId }) => {
+    return getDb()
+        .then(db => db.collection('sessions').findOne({
+            sessionId,
+            players: { $elemMatch: { playerId } }
+        }));
+}
 
-export const getSessionBySessionId = async (db, sessionId) => {
-    const result = await db.collection('sessions').findOne({
-        sessionId
-    })
+export const getSessionBySessionId = (sessionId) => {
+    return getDb()
+        .then(db => db.collection('sessions').findOne({ sessionId }))
+        .then(result => result.players);
+}
 
-    return result.players
-};
+export const insertSession = (session) => {
+    return getDb()
+        .then(db => db.collection('sessions').insertOne(session));
+}
 
-export const insertSession = async (session, db) => {
-    const result = await db.collection('sessions').insertOne(session);
+export const insertPlayer = ({ sessionId }, player) => {
+    return getDb()
+        .then(db => db.collection('sessions').findOneAndUpdate(
+            { sessionId },
+            { $push: { players: player } },
+            { returnDocument: 'after' }
+        ))
+        .then(result => result.value);
+}
 
-    return result
-};
+export const updateSessionState = ({ sessionId, playerId, ...changes }) => {
+    return getDb()
+        .then(db => db.collection('sessions').findOneAndUpdate(
+            { sessionId },
+            { $set: getUpdateFields(changes) },
+            { arrayFilters: [{ "elem.playerId": playerId }], returnDocument: 'after' }
+        ))
+        .then(result => result.value);
+}
 
-export const insertPlayer = async ({ sessionId }, player, db) => {
-    const result = await db.collection('sessions').findOneAndUpdate(
-        { sessionId },
-        { $push: { players: player } },
-        { returnDocument: 'after' });
-
-    return result.value
-};
-
-export const updateSessionState = async ({ sessionId, playerId, ...changes }, db) => {
-    const result = await db.collection('sessions').findOneAndUpdate(
-        { sessionId },
-        { $set: getUpdateFields(changes) },
-        {
-            arrayFilters: [{ "elem.playerId": playerId }],
-            returnDocument: 'after',
-        });
-
-    return result.value
-};
-
-export const getSessionByPlayerId = async (playerId, db) => {
-    const result = await db.collection('sessions').findOne({
+export const getSessionByPlayerId = async (playerId) => {
+    return getDb().then(db => db.collection('sessions').findOne({
         players: {
-            $elemMatch: {
-                playerId,
-                isActive: true
-            }
+            $elemMatch: { playerId, isActive: true }
         }
-    });
-
-    return result
-};
+    }));
+}

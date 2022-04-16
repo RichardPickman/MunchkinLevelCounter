@@ -1,10 +1,26 @@
+// import { compose } from '@rp/fp-utils';
 import * as mongodb from 'mongodb';
+import { getDbConfig } from '../config';
 
-export const getUri = ({ username, password, hostname, database }) =>  `mongodb+srv://${username}:${password}@${hostname}/${database}?retryWrites=true&w=majority`;
 
-export const createConnection = (config) => {
-    const uri = getUri(config)
+let instance = null;
+
+const getUri = ({ username, password, hostname, database }) => {
+    return `mongodb+srv://${username}:${password}@${hostname}/${database}?retryWrites=true&w=majority`;
+};
+
+export const createConnection = () => {
+    const config = getDbConfig();
+    const uri = getUri(config);
     const client = new mongodb.MongoClient(uri);
 
-    return client.connect()
+    return client.connect();
+};
+
+export const getDb = async () => {
+    if (!instance) {
+        instance = await createConnection();
+    }
+
+    return instance.db();
 };
