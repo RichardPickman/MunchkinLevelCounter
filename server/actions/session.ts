@@ -2,8 +2,8 @@ import { getPlayerId, getSessionId, createPlayer } from "../../helpers";
 import { insertSession, getSession, insertPlayer, updateSessionState } from "../resolvers/index";
 
 
-export const createSession = async ({ playerId = null } = {}, db) => {
-    const player = createPlayer(playerId, true)
+export const createSession = async ({ playerId = null, nickname = '' } = {}) => {
+    const player = createPlayer(playerId, nickname, true)
     const sessionId = getSessionId()
     const session = {
         sessionId,
@@ -11,32 +11,32 @@ export const createSession = async ({ playerId = null } = {}, db) => {
         players: [player],
     }
 
-    await insertSession(session, db)
+    await insertSession(session)
 
     return session
 }
 
-export const joinSession = async ({ sessionId, playerId }, db) => {
-    const player = createPlayer(playerId || getPlayerId())
+export const joinSession = async ({ sessionId, playerId, nickname }) => {
+    const player = createPlayer(playerId || getPlayerId(), nickname)
 
     const session = await getSession({
         sessionId,
         playerId: player.playerId
-    }, db)
+    })
 
     if (session) {
         return await updateSession({
             sessionId,
             playerId: player.playerId,
             isActive: true
-        }, db);
+        });
     }
 
-    const result = await insertPlayer({ sessionId }, player, db)
+    const result = await insertPlayer({ sessionId }, player)
 
     return result
 }
 
-export const updateSession = ({ sessionId, playerId, ...changes }, db) => updateSessionState({ sessionId, playerId, ...changes }, db)
+export const updateSession = ({ sessionId, playerId, ...changes }) => updateSessionState({ sessionId, playerId, ...changes })
 
-export const exitSession = ({ sessionId, playerId }, db) => updateSessionState({ sessionId, playerId, isActive: false }, db)
+export const exitSession = ({ sessionId, playerId }) => updateSessionState({ sessionId, playerId, isActive: false })

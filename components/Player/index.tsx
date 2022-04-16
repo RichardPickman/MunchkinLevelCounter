@@ -7,8 +7,9 @@ interface Props extends PlayerType {
     onClick: (data: Partial<PlayerType>) => void
 }
 
-export const Player = ({ onClick, playerId, isOwner, color, isActive, ...props }: Props) => (
+export const Player = ({ onClick, playerId, isOwner, color, isActive, nickname, ...props }: Props) => (
     <div className={styles.root} style={{ background: color }}>
+        <strong className={styles.nickname}>{nickname}</strong>
         <strong className={styles.total_power}>{sum(props)}</strong>
         <div className={styles.stats}>
             {Object.entries(props).map(([key, value], index) => <Controls name={key} value={value} onClick={onClick} key={index} />)}

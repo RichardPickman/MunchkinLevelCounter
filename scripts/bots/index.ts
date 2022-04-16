@@ -2,12 +2,12 @@ import prompt from 'prompt';
 import WebSocket from 'ws';
 import { arrayBufferToJSON } from '../../helpers';
 
-import { getConfig } from '../../server/config';
+import { getServerConfig } from '../../server/config';
 
-const config = getConfig()
+const config = getServerConfig()
 
 function setConnection(sessionId) {
-    const ws = new WebSocket(`ws://${config.ws.address}:${config.ws.port}`);
+    const ws = new WebSocket(`ws://${config.host}:${config.port}`);
 
     ws.onopen = () => {
         ws.send(

@@ -1,17 +1,17 @@
 import { createSession, updateSession, joinSession, exitSession } from './session'
 
 
-export const handleAction = async (action, db) => {
-    switch (action.type) {
+export const handleAction = async (action, payload) => {
+    switch (action) {
         case 'session/create':
-            return createSession(action.payload, db);
+            return createSession(payload);
         case 'session/update':
-            return updateSession(action.payload, db);
+            return updateSession(payload);
         case 'session/join':
-            return joinSession(action.payload, db);
+            return joinSession(payload);
         case 'session/exit':
-            return exitSession(action.payload, db);
+            return exitSession(payload);
         default:
-            console.log('ivnvalid action: ', action)
+            console.log('invalid action: ', action)
     }
 };

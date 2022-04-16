@@ -13,9 +13,10 @@ export const getPlayerId = () => getId(8);
 
 export const getSessionId = () => getId(16);
 
-export const createPlayer = (playerId, isOwner = false) => ({
+export const createPlayer = (playerId, nickname = '', isOwner = false) => ({
     playerId: playerId || getPlayerId(),
     isOwner,
+    nickname,
     color: getColor(),
     level: 1,
     equipment: 0,
@@ -29,6 +30,8 @@ export const arrayBufferToJSON = (arrayBuffer) => {
 
         return data;
     } catch (error) {
+        console.log("Wrong action: ", arrayBuffer.toString());
+        
         return null;
     };
 };
@@ -38,7 +41,7 @@ export const getUpdateFields = data => Object
     .reduce((result, key) => ({
         ...result,
         [`players.$[elem].${key}`]: data[key],
-}), {});
+    }), {});
 
 export const getColor = () => {
     const r = Math.floor(Math.random() * 255)

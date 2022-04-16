@@ -17,6 +17,16 @@
     pointer-events: none;
 }
 
+.nickname {
+    position: absolute;
+    font-size: 5em;
+    left: 50%;
+    top: 0;
+    opacity: 30%;
+    transform: translateX(-50%) translateY(0);
+    pointer-events: none;
+}
+
 .stats {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
