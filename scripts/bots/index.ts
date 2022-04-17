@@ -1,8 +1,8 @@
 import prompt from 'prompt';
 import WebSocket from 'ws';
-import { arrayBufferToJSON } from '../../../api/helpers';
+import { arrayBufferToJSON } from '../../api/helpers';
 
-import { getServerConfig } from '../../../api/config';
+import { getServerConfig } from '../../api/config';
 
 const config = getServerConfig()
 
