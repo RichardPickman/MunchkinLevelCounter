@@ -1,0 +1,21 @@
+version: "3"
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: ./api.dockerfile
+    ports:
+      - 8080:8080
+
+  ui:
+    build:
+      context: .
+      dockerfile: ./ui.dockerfile
+
+    # network_mode: host
+    depends_on:
+      - api
+
+    ports:
+      - 80:80

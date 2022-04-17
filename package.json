@@ -5,12 +5,17 @@
     "utils:bots": "tsnode --project tsconfig.json scripts/bots/index.ts",
     "utils:tunnel": "lt --port 8080 --subdomain munchkin-level-counter",
     "utils:lint": "next lint",
-    "api:watch": "nodemon server/index.ts",
-    "api:build": "tsc --project tsconfig.json",
-    "api:run": "node dist/server/index.js",
-    "ui:build": "tsc server/index.ts --outDir dist/server/",
-    "ui:watch": "next dev",
-    "ui:run": "next start",
+    
+    "api:watch": "nodemon api/index.ts",
+    "api:build": "tsc api/index.ts --outDir dist/api/",
+    "api:run": "node dist/api/index.js",
+    
+    "ui:build": "next build ui && next export -o dist/ui.static/ ui/",
+    "ui:watch": "next dev ui",
+    "ui:run": "next start ui",
+
+    "build": "yarn ui:build & yarn api:build",
+    "run": "yarn ui:run & yarn api:run",
     "dev": "yarn ui:watch & yarn api:watch"
   },
   "dependencies": {
