@@ -2,6 +2,8 @@ export type PlayerId = string;
 
 export type SessionId = string;
 
+export type Action = string
+
 export type Nickname = string;
 
 export interface Player {

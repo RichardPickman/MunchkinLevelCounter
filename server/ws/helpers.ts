@@ -5,8 +5,8 @@ export const broadcast = (websockets: WebSocket[], data: any) => {
     websockets.forEach((websocket) => websocket.send(result));
 };
 
-export const getWebSocketsBySession = (cache, { players }) => {
-    const websockets = [];
+export const getWebSocketsBySession = (cache: WebSocket[], { players } : []) => {
+    const websockets: WebSocket[] = [];
 
     players.forEach(player => {
         if (cache.has(player.playerId)) {

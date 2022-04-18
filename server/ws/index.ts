@@ -53,10 +53,10 @@ export const onMessage = async ({ message, ws }) => {
     broadcast(websockets, { type: 'session/update', payload: session });
 };
 
-export const createWebSocketServer = (onMessage, onClose, options = { noServer: true }) => {
+export const createWebSocketServer = (onMessage: () => void, onClose: () => void, options = { noServer: true }) => {
     const wss = new WebSocketServer(options);
 
-    wss.on('connection', ws => {
+    wss.on('connection', (ws) => {
         ws.on('close', () => onClose({ ws }));
         ws.on('message', arrayBuffer => onMessage({ message: arrayBufferToJSON(arrayBuffer), ws }));
     });

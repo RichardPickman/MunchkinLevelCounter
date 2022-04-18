@@ -1,7 +1,9 @@
 import { createSession, updateSession, joinSession, exitSession } from './session'
+import * as Types from '../../ui/types';
 
+type Payload = Types.Session | Types.PlayerId & { [K: string]: Types.Nickname | Types.PlayerId } 
 
-export const handleAction = async (action, payload) => {
+export const handleAction = async (action: string, payload: Payload) => {
     switch (action) {
         case 'session/create':
             return createSession(payload);
