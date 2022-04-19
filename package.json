@@ -12,30 +12,28 @@
     
     "ui:build": "next build ui && next export -o dist/ui.static/ ui/",
     "ui:watch": "next dev ui",
-    "ui:run": "next start ui",
+    "ui:run": "next start ui -p 80",
 
-    "build": "yarn ui:build & yarn api:build",
-    "run": "yarn ui:run & yarn api:run",
-    "dev": "yarn ui:watch & yarn api:watch"
+    "start": "yarn ui:run & yarn api:run"
   },
   "dependencies": {
-    "@types/prompt": "^1.1.2",
     "dotenv": "^16.0.0",
-    "localtunnel": "^2.0.2",
     "mongodb": "^4.3.0",
     "next": "^12.1.0",
-    "nodemon": "^2.0.15",
     "prompt": "^1.2.2",
     "react": "17.0.2",
     "react-dom": "17.0.2",
-    "ts-node": "^10.7.0",
     "ws": "^8.4.2"
   },
   "devDependencies": {
+    "@types/prompt": "^1.1.2",
     "@types/mongodb": "^4.0.7",
     "@types/node": "16.11.9",
     "@types/react": "17.0.36",
     "@types/ws": "^8.5.3",
+    "localtunnel": "^2.0.2",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.7.0",
     "eslint": "7",
     "eslint-config-next": "12.0.4",
     "eslint-plugin-react-hooks": "^4.3.0",
