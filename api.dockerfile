@@ -1,4 +1,4 @@
-FROM node:17
+FROM node:latest
 
 WORKDIR /usr/local/api
 
@@ -10,4 +10,3 @@ RUN yarn install --production
 
 EXPOSE 8080
 
-CMD ["node", "index.js"]
