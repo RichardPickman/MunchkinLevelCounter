@@ -2,6 +2,9 @@ version: "3"
 
 services:
   api:
+    env_file:
+      - ./.env
+    image: richardpickman/munchkin-level-counter-ui:alpha
     build:
       context: .
       dockerfile: ./api.dockerfile
@@ -12,9 +15,9 @@ services:
     build:
       context: .
       dockerfile: ./ui.dockerfile
-
+    image: richardpickman/munchkin-level-counter-api:alpha
     depends_on:
       - api
-
     ports:
       - 80:80
+      

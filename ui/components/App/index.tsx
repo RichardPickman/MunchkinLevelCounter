@@ -17,14 +17,20 @@ export const App = () => {
 
     const setNickname = useCallback((nickname: Types.Nickname) => dispatch({ type: 'nickname/set', payload: { nickname } }), [dispatch]);
     const setSessionId = useCallback((sessionId: Types.SessionId) => dispatch({ type: 'sessionId/set', payload: { sessionId } }), [dispatch]);
+    const setPlayerId = useCallback((playerId: Types.PlayerId) => dispatch({ type: 'sessionId/set', payload: { playerId } }), [dispatch]);
 
     useEffect(() => {
         const storedNickname = localStorage.getItem('nickname');
+        const storedPlayerId = localStorage.getItem('playerId')
 
         if (storedNickname) {
             setNickname(storedNickname);
         }
-    }, [setNickname]);
+
+        if (storedPlayerId) {
+            setPlayerId(storedPlayerId);
+        }
+    }, [setNickname, setPlayerId]);
 
     useEffect(() => localStorage.setItem('nickname', nickname), [nickname]);
 
