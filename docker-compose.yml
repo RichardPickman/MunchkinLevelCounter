@@ -2,6 +2,10 @@ version: "3"
 
 services:
   api:
+    env_file:
+      - ./.env
+    image: richardpickman/munchkin-level-counter-api:alpha
+    entrypoint: ['node', 'index.js']
     build:
       context: .
       dockerfile: ./api.dockerfile
@@ -12,7 +16,7 @@ services:
     build:
       context: .
       dockerfile: ./ui.dockerfile
-
+    image: richardpickman/munchkin-level-counter-ui:alpha
     depends_on:
       - api
 
