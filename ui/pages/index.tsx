@@ -1,5 +1,9 @@
 import { App } from '../components/App';
 
-export default function Home() {
+const Home = () => {
     return <App />
 }
+   
+Home.getInitialProps = async () => ({});
+   
+export default Home;

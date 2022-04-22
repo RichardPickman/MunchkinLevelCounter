@@ -1,3 +1,4 @@
+import getConfig from 'next/config';
 import { useCallback, useEffect } from 'react';
 import { useAppStore } from '../../hooks/useAppStore';
 import { useWebSocket } from '../../hooks/useWebSocket';
@@ -10,21 +11,30 @@ import * as Types from '../../types';
 import styles from './App.module.css';
 
 export const App = () => {
+    const { publicRuntimeConfig } = getConfig();
     const [{ sessionId, playerId, players, nickname }, dispatch] = useAppStore();
-    const ws = useWebSocket(process.env.NEXT_PUBLIC_WS, message => dispatch(message));
+    const ws = useWebSocket(publicRuntimeConfig.NEXT_PUBLIC_WS, message => dispatch(message));
+    console.log(publicRuntimeConfig.NEXT_PUBLIC_WS)
 
     const dispatchRemoteAction = (type, payload) => ws.send({ type, payload });
 
     const setNickname = useCallback((nickname: Types.Nickname) => dispatch({ type: 'nickname/set', payload: { nickname } }), [dispatch]);
     const setSessionId = useCallback((sessionId: Types.SessionId) => dispatch({ type: 'sessionId/set', payload: { sessionId } }), [dispatch]);
+    const setPlayerId = useCallback((playerId: Types.PlayerId) => dispatch({ type: 'sessionId/set', payload: { playerId } }), [dispatch]);
 
     useEffect(() => {
         const storedNickname = localStorage.getItem('nickname');
+        const storedPlayerId = localStorage.getItem('playerId');
 
         if (storedNickname) {
             setNickname(storedNickname);
         }
-    }, [setNickname]);
+
+        if (storedPlayerId) {
+            setPlayerId(storedPlayerId)
+        }
+
+    }, [setNickname, setPlayerId]);
 
     useEffect(() => localStorage.setItem('nickname', nickname), [nickname]);
 
@@ -51,11 +61,11 @@ export const App = () => {
     return (
         <div className={styles.root}>
             <Input onChange={setNickname} placeholder="Your name" value={nickname} />
+            <br />
             <Button onClick={create} text="Create" />
-            <div>
-                <Input onChange={setSessionId} placeholder="Session Id" value={sessionId} />
-                <Button onClick={join} text="Join" />
-            </div>
+            <br />
+            <Input onChange={setSessionId} placeholder="Session Id" value={sessionId} />
+            <Button onClick={join} text="Join" />
         </div>
     );
 }

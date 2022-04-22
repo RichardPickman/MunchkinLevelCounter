@@ -20,9 +20,13 @@ export const reducePlayerId = (playerId, action) => {
         case 'session/create':
         case 'session/join':
             return playerId || payload.players[payload.players.length - 1].playerId;
-        default:
-            return playerId;
-    }
+            case 'session/exit':
+                return null;
+            case 'playerId/set':
+                return payload.playerId
+            default:
+                return playerId;
+        }
 }
 
 export const reduceNickname = (nickname, action) => {

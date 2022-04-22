@@ -1,4 +1,3 @@
-// import { compose } from '@rp/fp-utils';
 import * as mongodb from 'mongodb';
 import { getDbConfig } from '../config';
 
