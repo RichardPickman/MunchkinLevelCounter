@@ -3,8 +3,8 @@ FROM node:lts
 WORKDIR /usr/local/api
 
 COPY package.json .
-
-COPY dist/api .
+COPY api/build .
+COPY .env .
 
 RUN yarn install --production
 
