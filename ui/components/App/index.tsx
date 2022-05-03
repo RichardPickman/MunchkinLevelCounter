@@ -69,3 +69,5 @@ export const App = () => {
         </div>
     );
 }
+
+App.getInitialProps = async () => ({});
