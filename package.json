@@ -7,12 +7,12 @@
     "utils:lint": "next lint",
     
     "api:watch": "nodemon api/index.ts",
-    "api:build": "tsc api/index.ts --outDir dist/api/",
-    "api:run": "node dist/api/index.js",
+    "api:build": "tsc api/index.ts --outDir api/build/",
+    "api:run": "node api/build/index.js",
     
-    "ui:build": "next build ui && next export -o dist/ui.static/ ui/",
+    "ui:build": "next build ui",
     "ui:watch": "next dev ui",
-    "ui:run": "next start ui -p 80",
+    "ui:run": "next start",
 
     "start": "yarn ui:run & yarn api:run"
   },
@@ -27,7 +27,6 @@
   },
   "devDependencies": {
     "@types/prompt": "^1.1.2",
-    "@types/mongodb": "^4.0.7",
     "@types/node": "16.11.9",
     "@types/react": "17.0.36",
     "@types/ws": "^8.5.3",
