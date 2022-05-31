@@ -1,5 +1,4 @@
 import { createServer } from 'http';
-
 import { getServerConfig } from './config/index';
 import { createWebSocketServer } from './ws';
 import { onClose, onMessage } from './ws';

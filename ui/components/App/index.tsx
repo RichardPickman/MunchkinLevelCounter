@@ -14,7 +14,6 @@ export const App = () => {
     const { publicRuntimeConfig } = getConfig();
     const [{ sessionId, playerId, players, nickname }, dispatch] = useAppStore();
     const ws = useWebSocket(publicRuntimeConfig.NEXT_PUBLIC_WS, message => dispatch(message));
-    console.log(publicRuntimeConfig.NEXT_PUBLIC_WS)
 
     const dispatchRemoteAction = (type, payload) => ws.send({ type, payload });
 
